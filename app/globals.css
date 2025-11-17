@@ -1,26 +1,42 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+    /* New Theme - Background Hierarchy */
+    --bg-deep-dark: #12151C;
+    --bg-main: #1A1E28;
+    --bg-interactive: #2C3240;
+    --bg-tertiary: #434C5E; /* Kept for consistency if needed, but prefer the new ones */
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+    /* New Theme - Text Hierarchy */
+    --text-bright: #FFFFFF;
+    --text-dim: #B0B8C4;
+    --text-dimmer: #8A94A6;
+    --text-primary: #ECEFF4; /* Kept for backwards compatibility */
+    --text-secondary: #D8DEE9; /* Kept for backwards compatibility */
+    --text-muted: #8A94A6; /* Re-aliased */
+
+    /* New Theme - Accent Colors */
+    --accent-primary: #00E0FF; /* Vibrant Cyan */
+    --accent-success: #A3BE8C;
+    --accent-warning: #EBCB8B;
+    --accent-danger: #BF616A;
+
+    /* New Theme - Border */
+    --border-primary: #2C3240; /* Using interactive color for borders */
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    background-color: var(--bg-deep-dark);
+    color: var(--text-primary);
+    font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 }

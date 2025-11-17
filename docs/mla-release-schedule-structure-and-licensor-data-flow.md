@@ -1,0 +1,240 @@
+---
+type: conversation-summary
+status: review
+context:
+  - legal-financial
+  - operations
+  - systems-data
+category:
+  - legal
+  - workflow
+  - release-management
+  - contract-automation
+  - data-model
+tags:
+  - mla
+  - release-schedule
+  - licensors
+  - perpetual-licence
+  - catalog-stability
+  - loudkult
+  - ada
+  - latex-template
+  - publishing
+  - engeloop-publishing
+  - e-sign
+related:
+  - "[[master-licence-agreement-template]]"
+  - "[[release-schedule-template]]"
+---
+
+suggested title: mla-release-schedule-structure-and-licensor-data-flow
+
+## Context
+- You are refining Engeloop’s contracting model around a `Master Licence Agreement` (MLA) plus track-specific `Release Schedules`
+- Current state is a single 8 page licence with all terms plus a Schedule A per track, which is heavy to redo for each release
+- Goal is to:
+  - Sign an MLA once per licensor as the evergreen legal framework
+  - Use short Release Schedules per deal to capture track specific rights, term, territory, splits, advances, and publishing
+  - Align this with ADA’s reality (UPC and ISRC not known at contract time) and Loudkult’s licensor onboarding workflow
+- Context includes:
+  - Engeloop licensing masters rather than acquiring ownership, but wanting perpetual licences with reversion safeguards
+  - Operational need for catalog stability for both Engeloop and Loudkult (avoid expiring licences and admin churn)
+  - Desire to treat the contract as a data structure that maps cleanly into your internal database and tools
+
+## Key Decisions
+- Use a single MLA per licensor instead of repeating full agreements
+- MLA will:
+  - Identify Label and Licensor with a structured `Parties` block
+  - Define the core concepts (`Agreement`, `Recordings`, `Release Schedule`, `Catalog Number`, `Net Receipts`, etc.)
+  - Set standard, non variable legal terms (grant of rights framework, accounting, warranties, data use)
+  - Not fix any default label share, licensor pool, or royalty split values
+- Use one Release Schedule per “deal” or set of Recordings
+- Release Schedule will:
+  - Identify the relevant Recordings and can include multiple mixes and configurations (radio edit, extended, etc.)
+  - Reference the MLA and licensor
+  - Set variable deal terms: Term, Territory, royalty model, splits, advances, recoupable costs, and any publishing
+  - Optionally list one or more Catalog Numbers, but Catalog Number is not the identity of the Agreement
+- Catalog Number usage
+  - Decision: Catalog Number is a helper identifier and link to ADA, not the core ID of the Agreement
+  - One Agreement can be associated with multiple Catalog Numbers (e.g. streaming plus Beatport configurations)
+- Perpetual licence with reversion
+  - Non negotiable operational principle: Engeloop licences masters in perpetuity
+  - There will be reversion or termination triggers (e.g. failure to release, extended unavailability on major DSPs) so artists have a safety valve
+- Licensor data capture
+  - Licensor will explicitly type their own `legal name`, `PKA`, `postal address`, and `email` into the MLA via e signing form fields
+  - That data becomes the confirmed source of truth for the `People` / `Licensor` records and Loudkult onboarding
+- Licensor type
+  - No separate template for companies is needed
+  - Single MLA template will support `Licensor type: Individual / Company` with minor conditional fields (contact person for companies)
+- Publishing treatment
+  - Default: Engeloop does not administer publishing and the MLA will say so
+  - Exception: for specific deals, an optional publishing section in the Release Schedule will describe Engeloop Publishing’s role and refer to a publishing split sheet
+
+## Technical Details
+- MLA structure
+- Parties block
+  - Label:
+    - `Algorhythm Ltd. trading as "Engeloop Records"`
+    - Registered address: `Waterpoint Apartments, A6102`, `SLM 1020 Sliema`, `Malta`
+    - `Incorporated under the laws of Malta`
+    - `Reg. no.: C 109942`
+    - `VAT no.: MT31451031`
+    - `Contact email: business@engeloop.com` (or equivalent)
+  - Licensor:
+    - `Licensor type: [Individual / Company]`
+    - `Legal name`, `PKA / Trading name`
+    - `Postal address` split into street and number, postcode and city, country
+    - `Contact email`
+    - Optional `Contact person (name, role)` when licensor is a company
+  - All licensor details will be entered by the signer via e signing form fields
+- Licensor details, notices, and data use
+  - Clause confirming:
+    - Licensor supplied the data and warrants it is accurate
+    - Licensor must notify Engeloop of changes
+    - Engeloop may store and share details with the Distributor and royalty service providers (including Loudkult)
+    - Notices can be sent to postal or email address and are deemed received when accessible
+- Recitals and agreement structure
+  - Recitals state:
+    - Licensor owns or controls rights in sound recordings
+    - Label releases and markets sound recordings
+    - MLA sets standard terms
+    - Variable terms are in Release Schedules
+    - MLA plus each Release Schedule form a separate `Agreement` for the specified Recordings
+  - Definitions include:
+    - `Agreement`, `Artwork`, `Catalog Number`, `Distributor`, `MLA`, `Net Receipts`, `Recordings`, `Release Schedule`, `Royalty Split`, `Term`, `Territory`
+  - Agreement structure section:
+    - MLA is binding by itself
+    - No licence for any Recording exists until a Release Schedule is fully executed
+    - Each Release Schedule incorporates MLA by reference
+    - In conflicts, Release Schedule terms prevail for that Agreement only
+- Recordings and associated versions
+  - `Recordings` are:
+    - Core masters listed in the Release Schedule, and
+    - `Associated Versions`:
+      - Edits, radio edits, extended mixes, alternative versions
+      - Created by or on behalf of the Licensor
+      - Delivered as part of the same release campaign
+      - With identical ownership and splits, unless otherwise agreed
+  - Explicit exclusion:
+    - Remixes with additional primary licensors are not included unless added via amendment or separate Release Schedule
+- Grant of rights
+  - Licensor grants Label an exclusive licence (unless otherwise stated in Release Schedule) to:
+    - Reproduce the Recordings in digital formats
+    - Distribute, transmit, and make available via all typical digital channels (streaming, downloads) through DSPs
+    - Authorise Distributor and service providers to exercise these rights for distribution and marketing
+    - Use names, approved likenesses, approved bios, and Artwork for promotion and exploitation of the Recordings
+  - Exact `Term`, `Territory`, and `exclusivity` are defined per Release Schedule
+  - Ownership of copyright in the Recordings does not transfer; rights remain licences only
+  - Acknowledge Engeloop’s practice of obtaining rights on a perpetual basis, subject to reversion clauses
+- Term and territory
+  - For each Agreement:
+    - `Term` and `Territory` come from Release Schedule
+    - Perpetual licences must be clearly stated as such in the Release Schedule
+    - Any reversion or termination triggers (e.g. failure to release, extended DSP unavailability) live in MLA and/or Release Schedule
+- Accounting and payment
+  - High level:
+    - Label (and possibly Distributor) accounts to licensor for their share of `Net Receipts`
+    - Statement frequency and payment timing to be specified (e.g. semi annual)
+    - `Net Receipts` defined as Distributor receipts minus fees, taxes, mechanical royalties, and deductions at source
+    - All variable economics per Agreement live in the Release Schedule:
+      - Royalty model (label share vs licensor pool or direct split)
+      - Percentage allocation between licensors
+      - Advances and recoupable costs and recoupment bases
+  - Distributor interaction:
+    - Acknowledge that Distributor (Loudkult) may pay and report directly to licensors
+    - Those payments and statements are treated as if made on behalf of the Label
+- Release Schedule technical shape
+  - References:
+    - Label, Licensor, MLA date
+  - Catalog Numbers and configurations:
+    - Can list one or more Catalog Numbers (e.g. streaming product and Beatport extended mix)
+    - Additional Catalog Numbers assigned later by Label or Distributor are deemed associated with the Agreement when recorded internally
+  - Recordings:
+    - List each Recording with `reference title`, `mix / version`, `notes`
+    - Explicitly rely on MLA’s `Associated Versions` clause to capture edits etc. with same splits
+  - Term and Territory:
+    - Term start (e.g. release date or signature date)
+    - Term duration (e.g. perpetual) and any renewals or reversions
+    - Territory (typically `World`)
+  - Financials:
+    - Royalty model:
+      - Option A: Label share and licensor pool
+      - Option B: direct split of `Net Receipts`
+    - Table of participants and their percentages within the licensor portion or directly of Net Receipts
+    - Advance line with:
+      - Amount
+      - Recoupment source (e.g. licensor share under this Agreement only)
+      - Cross collateralisation rules
+    - Recoupable costs line:
+      - Usually “None”
+      - Otherwise, specific cost items and recoupment scope
+  - Publishing:
+    - Default clause: no publishing administration by the Label, writers handle their own publishing
+    - Optional clause: Engeloop Publishing administers certain shares for this Agreement, referring to a separate publishing agreement and attached split sheet listing legal names, IPIs, and PROs
+  - Signatures:
+    - Label signature block for Algorhythm Ltd. t/a Engeloop Records
+    - Licensor signature block with name and title/capacity (individual or company role)
+- LaTeX and typesetting aspects
+  - MLA is being compiled in LaTeX with:
+    - `article` class, margins via `geometry`, spacing via `setspace`
+    - `tabular` environments for structured Label details
+    - Form like licensor block using underline rules `\rule{0.9\linewidth}{0.4pt}` and checkboxes with `\square`
+  - Licensor block is designed to:
+    - Look visually like a form
+    - Be overlayed with e signing fields for direct licensor input
+- E signing and data integration pattern
+  - For MLA:
+    - Label details are fixed in the template
+    - Licensor fills all their fields directly in the e signing platform (DocuSign, Adobe, etc.)
+    - After execution, licensor data is extracted and mapped into:
+      - `People` table
+      - `Artist` table (via PKA)
+      - `Licensor` entity linked to MLA
+  - For Release Schedule:
+    - Label generates draft from internal app or Airtable like interface
+    - E signing collects signatures and any necessary confirmations (but less raw data entry than MLA)
+    - Executed Release Schedule creates an `Agreement` record linking licensor, masters, splits, catalog numbers, and ADA product configurations
+- Ownership vs licensing and P line
+  - Even though Engeloop licences masters rather than owning them outright, you can still put Engeloop on the `℗` line as the entity commercially exploiting the sound recording
+  - Ownership of the master remains with the licensor, but exploitation control and branding for the term rests with Engeloop under the licence
+
+## Next Steps
+- Action items
+- Finalise MLA wording
+  - Fill in the placeholder sections for warranties, indemnities, limitation of liability, assignment, governing law, dispute resolution, and audit with jurisdiction appropriate language
+  - Write explicit reversion / termination clause based on:
+    - Failure to release within a certain timeframe
+    - Prolonged unavailability on major DSPs
+  - Decide on standard accounting cadence and minimum payment thresholds and add exact numbers
+- Finalise Release Schedule template
+  - Lock in a default structure for:
+    - Recordings list
+    - Catalog Numbers section
+    - Term and Territory defaults
+    - Royalty model language (including Engeloop’s standard label share vs licensor pool if you keep that structure)
+    - Optional publishing section and how the publishing split sheet is referenced
+- Align with internal data model and app
+  - Map each MLA and Release Schedule field to corresponding database fields for `People`, `Artists`, `Licensors`, `Agreements`, `Masters`, `Releases`, `CatalogNumbers`
+  - Decide how you will store the MLA reference for each licensor (e.g. `mla_id`, `mla_date`, and document path)
+  - Define how an Agreement record will be represented and linked to ADA releases
+- E signing implementation
+  - Configure MLA template in your chosen e signing tool with:
+    - Properly named text fields for each licensor datum
+    - Radio group for licensor type
+    - Signature blocks for both parties
+  - Do test runs with dummy licensors to ensure data extraction into your database is reliable
+- Communication and positioning
+  - Draft a plain language explanation you can send to artists covering:
+    - Why Engeloop uses a perpetual licence with reversion safeguards
+    - How catalog stability benefits both label and artist
+    - How MLA plus Release Schedule structure works in practice
+- Outstanding questions
+- Exact wording and thresholds for:
+  - Reversion triggers (time to release, days of DSP unavailability, cure periods)
+  - Statement frequency and minimum payment thresholds
+- Whether to:
+  - Embed any mention of specific distributors (e.g. Loudkult) by name, or keep the MLA fully distributor agnostic with a “currently including Loudkult AB” style reference
+  - Allow non perpetual Terms in edge cases and how to handle that in Release Schedule language
+- How deeply to integrate:
+  - E signing platform and your internal app or database via API versus manual copy and paste in the first iteration
