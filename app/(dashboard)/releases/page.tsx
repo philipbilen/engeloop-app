@@ -123,9 +123,9 @@ export default async function ReleasesPage({ searchParams }: PageProps) {
               {tableData.length} total release{tableData.length !== 1 ? "s" : ""}
             </p>
           </div>
-          <Button asChild>
-            <Link href="/releases/new">+ NEW RELEASE</Link>
-          </Button>
+          <Link href="/releases/new">
+            <Button>+ NEW RELEASE</Button>
+          </Link>
         </div>
 
         {/* Search and Filters */}
