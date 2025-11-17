@@ -34,7 +34,7 @@ export default async function ReleasesPage({ searchParams }: PageProps) {
       internal_catalog_id,
       release_main_artists(
         position,
-        artist_profile:artist_profiles(stage_name)
+        artist_profiles(artist_name)
       )
     `)
 
@@ -77,7 +77,14 @@ export default async function ReleasesPage({ searchParams }: PageProps) {
       break
   }
 
-  const { data: releases } = await query
+  const { data: releases, error } = await query
+
+  // Log any errors for debugging
+  if (error) {
+    console.error("Error fetching releases:", error)
+  }
+
+  console.log("Releases query result:", { count: releases?.length, releases })
 
   // Transform data for table
   const tableData =
@@ -86,7 +93,7 @@ export default async function ReleasesPage({ searchParams }: PageProps) {
       const artists =
         release.release_main_artists
           ?.sort((a, b) => a.position - b.position)
-          .map((link) => link.artist_profile)
+          .map((link) => link.artist_profiles)
           .filter(Boolean) || []
 
       return {

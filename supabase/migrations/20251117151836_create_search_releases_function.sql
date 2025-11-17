@@ -22,10 +22,8 @@ BEGIN
       r.title ILIKE '%' || query_text || '%' OR
       COALESCE(r.version, '') ILIKE '%' || query_text || '%' OR
       COALESCE(r.internal_catalog_id, '') ILIKE '%' || query_text || '%' OR
-      COALESCE(ap_main.stage_name, '') ILIKE '%' || query_text || '%' OR
-      COALESCE(ap_main.full_legal_name, '') ILIKE '%' || query_text || '%' OR
-      COALESCE(ap_contrib.stage_name, '') ILIKE '%' || query_text || '%' OR
-      COALESCE(ap_contrib.full_legal_name, '') ILIKE '%' || query_text || '%';
+      COALESCE(ap_main.artist_name, '') ILIKE '%' || query_text || '%' OR
+      COALESCE(ap_contrib.artist_name, '') ILIKE '%' || query_text || '%';
   END IF;
 END;
 $$;

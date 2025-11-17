@@ -15,11 +15,8 @@ CREATE INDEX IF NOT EXISTS idx_release_contributors_artist_profile_id
 ON release_contributors(artist_profile_id);
 
 -- Index for artist_profiles text search
-CREATE INDEX IF NOT EXISTS idx_artist_profiles_stage_name_trgm
-ON artist_profiles USING gin (stage_name gin_trgm_ops);
-
-CREATE INDEX IF NOT EXISTS idx_artist_profiles_legal_name_trgm
-ON artist_profiles USING gin (full_legal_name gin_trgm_ops);
+CREATE INDEX IF NOT EXISTS idx_artist_profiles_artist_name_trgm
+ON artist_profiles USING gin (artist_name gin_trgm_ops);
 
 -- Index for releases text search
 CREATE INDEX IF NOT EXISTS idx_releases_title_trgm
@@ -34,4 +31,4 @@ CREATE EXTENSION IF NOT EXISTS pg_trgm;
 -- Add comments
 COMMENT ON INDEX idx_release_main_artists_release_id IS 'Improve release artist joins';
 COMMENT ON INDEX idx_release_contributors_release_id IS 'Improve release contributor joins';
-COMMENT ON INDEX idx_artist_profiles_stage_name_trgm IS 'Enable fast ILIKE search on artist names';
+COMMENT ON INDEX idx_artist_profiles_artist_name_trgm IS 'Enable fast ILIKE search on artist names';

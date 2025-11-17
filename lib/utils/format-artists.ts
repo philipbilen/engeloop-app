@@ -10,7 +10,7 @@
  * @returns Formatted artist display string
  */
 export function formatArtistDisplayLine(
-  artists: Array<{ stage_name: string }>,
+  artists: Array<{ artist_name: string }>,
   maxArtists: number = 4
 ): string {
   if (!artists || artists.length === 0) {
@@ -19,7 +19,7 @@ export function formatArtistDisplayLine(
 
   // Take only up to maxArtists
   const displayArtists = artists.slice(0, maxArtists)
-  const names = displayArtists.map(a => a.stage_name)
+  const names = displayArtists.map(a => a.artist_name)
 
   if (names.length === 1) {
     return names[0]
