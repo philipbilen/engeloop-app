@@ -1,15 +1,16 @@
 "use client"
 
-import Link from "next/link"
+import { memo, useCallback, useMemo } from "react"
+import { useRouter } from "next/navigation"
 import { StatusBadge } from "@/components/ui/badge"
-import { SortableHeader } from "./sortable-header"
+import { SortableHeader, type SortOption } from "./sortable-header"
 import type { ReleaseStatus } from "@/components/ui/badge"
 
 interface Artist {
   stage_name: string
 }
 
-interface ReleaseRow {
+export interface ReleaseRow {
   id: string
   title: string
   version: string | null
@@ -22,6 +23,8 @@ interface ReleaseRow {
 
 interface ReleasesTableProps {
   releases: ReleaseRow[]
+  currentSort: SortOption
+  onSortChange: (next: SortOption) => void
 }
 
 function formatReleaseDate(dateString: string | null) {
@@ -38,7 +41,69 @@ function formatReleaseDate(dateString: string | null) {
   }
 }
 
-export function ReleasesTable({ releases }: ReleasesTableProps) {
+const ReleaseRowComponent = memo(function ReleaseRow({ release }: { release: ReleaseRow }) {
+  const router = useRouter()
+
+  const formattedDate = useMemo(() => formatReleaseDate(release.release_date), [release.release_date])
+
+  const handleClick = useCallback(() => {
+    router.push(`/releases/${release.id}/edit`)
+  }, [release.id, router])
+
+  return (
+    <tr
+      onClick={handleClick}
+      className="border-b transition-colors hover:bg-[var(--bg-interactive)] cursor-pointer group"
+      style={{ borderColor: "var(--border-primary)" }}
+    >
+      {/* Release Date - Stacked */}
+      <td className="px-4 py-4 table-cell align-middle">
+        <div className="text-[var(--text-bright)] font-medium text-sm">
+          {formattedDate.line1}
+        </div>
+        {formattedDate.line2 && (
+          <div className="text-[var(--text-dimmer)] text-xs">
+            {formattedDate.line2}
+          </div>
+        )}
+      </td>
+
+      {/* Title / Artist - Stacked */}
+      <td className="px-4 py-4 table-cell align-middle">
+        <div className="text-[var(--text-bright)] font-semibold">
+          {release.title}
+          {release.version && (
+            <span className="text-[var(--text-dim)] font-normal">
+              {" "}({release.version})
+            </span>
+          )}
+        </div>
+        <div className="text-[var(--text-dim)] text-sm mt-1">
+          {release.artist_display}
+        </div>
+      </td>
+
+      {/* Type */}
+      <td className="px-4 py-4 text-[var(--text-dim)] text-sm table-cell align-middle">
+        {release.type}
+      </td>
+
+      {/* UPC */}
+      <td className="px-4 py-4 text-[var(--text-dim)] text-sm font-mono table-cell align-middle">
+        {release.upc || "—"}
+      </td>
+
+      {/* Status */}
+      <td className="px-4 py-4 table-cell align-middle">
+        <StatusBadge status={release.status} />
+      </td>
+    </tr>
+  )
+})
+
+ReleaseRowComponent.displayName = "ReleaseRow"
+
+function ReleasesTableComponent({ releases, currentSort, onSortChange }: ReleasesTableProps) {
   return (
     <div className="overflow-x-auto">
       <table className="w-full border-collapse">
@@ -48,10 +113,20 @@ export function ReleasesTable({ releases }: ReleasesTableProps) {
         >
           <tr>
             <th className="px-4 py-3 text-left w-32">
-              <SortableHeader column="release_date" label="Release Date" />
+              <SortableHeader
+                column="release_date"
+                label="Release Date"
+                currentSort={currentSort}
+                onSortChange={onSortChange}
+              />
             </th>
             <th className="px-4 py-3 text-left">
-              <SortableHeader column="title" label="Title / Artist" />
+              <SortableHeader
+                column="title"
+                label="Title / Artist"
+                currentSort={currentSort}
+                onSortChange={onSortChange}
+              />
             </th>
             <th className="px-4 py-3 text-left w-24">
               <span className="font-semibold uppercase tracking-wide text-xs text-[var(--text-dimmer)]">
@@ -64,7 +139,12 @@ export function ReleasesTable({ releases }: ReleasesTableProps) {
               </span>
             </th>
             <th className="px-4 py-3 text-left w-44">
-              <SortableHeader column="status" label="Status" />
+              <SortableHeader
+                column="status"
+                label="Status"
+                currentSort={currentSort}
+                onSortChange={onSortChange}
+              />
             </th>
           </tr>
         </thead>
@@ -79,67 +159,16 @@ export function ReleasesTable({ releases }: ReleasesTableProps) {
               </td>
             </tr>
           ) : (
-            releases.map((release) => {
-              const date = formatReleaseDate(release.release_date)
-
-              return (
-                <Link
-                  key={release.id}
-                  href={`/releases/${release.id}/edit`}
-                  legacyBehavior
-                >
-                  <a
-                    className="table-row border-b transition-colors hover:bg-[var(--bg-interactive)] cursor-pointer group"
-                    style={{ borderColor: "var(--border-primary)" }}
-                  >
-                    {/* Release Date - Stacked */}
-                    <td className="px-4 py-4 table-cell align-middle">
-                      <div className="text-[var(--text-bright)] font-medium text-sm">
-                        {date.line1}
-                      </div>
-                      {date.line2 && (
-                        <div className="text-[var(--text-dimmer)] text-xs">
-                          {date.line2}
-                        </div>
-                      )}
-                    </td>
-
-                    {/* Title / Artist - Stacked */}
-                    <td className="px-4 py-4 table-cell align-middle">
-                      <div className="text-[var(--text-bright)] font-semibold">
-                        {release.title}
-                        {release.version && (
-                          <span className="text-[var(--text-dim)] font-normal">
-                            {" "}({release.version})
-                          </span>
-                        )}
-                      </div>
-                      <div className="text-[var(--text-dim)] text-sm mt-1">
-                        {release.artist_display}
-                      </div>
-                    </td>
-
-                    {/* Type */}
-                    <td className="px-4 py-4 text-[var(--text-dim)] text-sm table-cell align-middle">
-                      {release.type}
-                    </td>
-
-                    {/* UPC */}
-                    <td className="px-4 py-4 text-[var(--text-dim)] text-sm font-mono table-cell align-middle">
-                      {release.upc || "—"}
-                    </td>
-
-                    {/* Status */}
-                    <td className="px-4 py-4 table-cell align-middle">
-                      <StatusBadge status={release.status} />
-                    </td>
-                  </a>
-                </Link>
-              )
-            })
+            releases.map((release) => (
+              <ReleaseRowComponent key={release.id} release={release} />
+            ))
           )}
         </tbody>
       </table>
     </div>
   )
 }
+
+export const ReleasesTable = memo(ReleasesTableComponent)
+
+ReleasesTable.displayName = "ReleasesTable"

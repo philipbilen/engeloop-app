@@ -26,11 +26,17 @@ export async function addContributor(
   const supabase = createServerClient()
   const { data, error } = await supabase
     .from("release_contributors")
-    .insert({
-      release_id: releaseId,
-      artist_profile_id: artistProfileId,
-      role: role,
-    })
+    .upsert(
+      {
+        release_id: releaseId,
+        artist_profile_id: artistProfileId,
+        role: role,
+      },
+      {
+        onConflict: "release_id,artist_profile_id",
+        ignoreDuplicates: false,
+      }
+    )
     .select(`*, artist_profiles(*)`)
     .single()
 

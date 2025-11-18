@@ -15,34 +15,62 @@ interface StatusBadgeProps {
   className?: string
 }
 
-const statusConfig: Record<ReleaseStatus, { label: string; className: string }> = {
+const statusConfig: Record<ReleaseStatus, { label: string; style: React.CSSProperties }> = {
   planning: {
     label: "DRAFT",
-    className: "bg-gray-600/20 text-gray-400 border-gray-600",
+    style: {
+      backgroundColor: 'rgba(44, 50, 64, 0.75)',
+      color: 'var(--text-dim)',
+      borderColor: 'var(--border-primary)',
+    },
   },
   signed: {
     label: "SIGNED",
-    className: "bg-blue-600/20 text-blue-400 border-blue-600",
+    style: {
+      backgroundColor: 'rgba(var(--accent-primary-rgb), 0.12)',
+      color: 'var(--accent-primary)',
+      borderColor: 'rgba(var(--accent-primary-rgb), 0.5)',
+    },
   },
   in_progress: {
     label: "IN PROGRESS",
-    className: "bg-yellow-600/20 text-yellow-400 border-yellow-600",
+    style: {
+      backgroundColor: 'rgba(var(--accent-warning-rgb), 0.15)',
+      color: 'var(--accent-warning)',
+      borderColor: 'rgba(var(--accent-warning-rgb), 0.5)',
+    },
   },
   ready_for_delivery: {
     label: "READY FOR DELIVERY",
-    className: "bg-teal-600/20 text-teal-400 border-teal-600",
+    style: {
+      backgroundColor: 'rgba(var(--accent-success-rgb), 0.12)',
+      color: 'var(--accent-success)',
+      borderColor: 'rgba(var(--accent-success-rgb), 0.55)',
+    },
   },
   delivered: {
     label: "DELIVERED",
-    className: "bg-purple-600/20 text-purple-400 border-purple-600",
+    style: {
+      backgroundColor: 'rgba(var(--accent-success-rgb), 0.14)',
+      color: 'var(--accent-success)',
+      borderColor: 'rgba(var(--accent-success-rgb), 0.6)',
+    },
   },
   released: {
     label: "RELEASED",
-    className: "bg-green-600/20 text-green-400 border-green-600",
+    style: {
+      backgroundColor: 'rgba(var(--accent-success-rgb), 0.16)',
+      color: 'var(--accent-success)',
+      borderColor: 'rgba(var(--accent-success-rgb), 0.65)',
+    },
   },
   archived: {
     label: "ARCHIVED",
-    className: "bg-gray-700/20 text-gray-500 border-gray-700",
+    style: {
+      backgroundColor: 'rgba(44, 50, 64, 0.55)',
+      color: 'var(--text-dimmer)',
+      borderColor: 'var(--border-primary)',
+    },
   },
 }
 
@@ -52,10 +80,10 @@ export function StatusBadge({ status, className }: StatusBadgeProps) {
   return (
     <span
       className={cn(
-        "inline-block px-3 py-1 text-xs font-semibold uppercase tracking-wide border-2 rounded",
-        config.className,
+        "inline-flex items-center px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wide border-2 rounded-full leading-none",
         className
       )}
+      style={config.style}
     >
       {config.label}
     </span>

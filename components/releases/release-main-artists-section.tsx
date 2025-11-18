@@ -1,10 +1,11 @@
 "use client"
 
-import { useState } from "react" // Removed useEffect as it's no longer used
+import { useState, useTransition } from "react" // Removed useEffect as it's no longer used
 import { Database } from "@/lib/supabase/types"
 import { updateMainArtists } from "@/lib/actions/artists"
 import { Button } from "@/components/ui/button"
 import { AddArtistModal } from "@/components/shared/add-artist-modal"
+import { fanOutTrackMainArtists, removeInheritedTrackMainArtists } from "@/lib/actions/track-links"
 
 type ArtistProfile = Database["public"]["Tables"]["artist_profiles"]["Row"]
 
@@ -21,6 +22,7 @@ export function ReleaseMainArtistsSection({
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null)
   const [isSaving, setIsSaving] = useState(false)
+  const [isApplyingAll, startApplyingAll] = useTransition()
 
   // No need for useEffect to fetch all artists anymore, as AddArtistModal handles its own search.
 
@@ -75,6 +77,18 @@ export function ReleaseMainArtistsSection({
     }
   }
 
+  const handleApplyAllTracks = (artistId: string) => {
+    startApplyingAll(async () => {
+      await fanOutTrackMainArtists(releaseId, [artistId])
+    })
+  }
+
+  const handleRemoveInheritedFromTracks = (artistId: string) => {
+    startApplyingAll(async () => {
+      await removeInheritedTrackMainArtists(releaseId, [artistId])
+    })
+  }
+
   return (
     <>
       <AddArtistModal
@@ -97,9 +111,9 @@ export function ReleaseMainArtistsSection({
         </div>
 
         {/* Artist List */}
-        <div className="space-y-2 mb-4">
+        <div className="divide-y divide-[var(--border-primary)] rounded-md border border-[var(--border-primary)] bg-[var(--bg-main)] mb-4">
           {artists.length === 0 ? (
-            <p style={{ color: "var(--text-dimmer)" }}>No artists added yet</p>
+            <p className="p-4" style={{ color: "var(--text-dimmer)" }}>No artists added yet</p>
           ) : (
             artists.map((artist, index) => (
               <div
@@ -108,9 +122,8 @@ export function ReleaseMainArtistsSection({
                 onDragStart={() => handleDragStart(index)}
                 onDragOver={(e) => handleDragOver(e, index)}
                 onDragEnd={handleDragEnd}
-                className="p-4 flex items-center justify-between cursor-move rounded"
+                className="p-4 flex items-center justify-between cursor-move"
                 style={{
-                  border: "2px solid var(--border-primary)",
                   backgroundColor: "var(--bg-main)",
                   opacity: draggedIndex === index ? 0.5 : 1,
                 }}
@@ -139,13 +152,31 @@ export function ReleaseMainArtistsSection({
                     )}
                   </div>
                 </div>
-                <Button
-                  variant="danger"
-                  size="sm"
-                  onClick={() => handleRemoveArtist(artist.id)}
-                >
-                  REMOVE
-                </Button>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => handleApplyAllTracks(artist.id)}
+                    disabled={isApplyingAll}
+                  >
+                    Apply to Tracks
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleRemoveInheritedFromTracks(artist.id)}
+                    disabled={isApplyingAll}
+                  >
+                    Remove from Tracks
+                  </Button>
+                  <Button
+                    variant="danger"
+                    size="sm"
+                    onClick={() => handleRemoveArtist(artist.id)}
+                  >
+                    Remove
+                  </Button>
+                </div>
               </div>
             ))
           )}

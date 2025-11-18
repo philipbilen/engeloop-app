@@ -1,6 +1,5 @@
 "use client"
 
-import { useRouter, useSearchParams } from "next/navigation"
 import { cn } from "@/lib/utils"
 import type { ReleaseStatus } from "@/components/ui/badge"
 
@@ -15,22 +14,13 @@ const statusOptions: Array<{ value: "all" | ReleaseStatus; label: string }> = [
   { value: "archived", label: "Archived" },
 ]
 
-export function StatusFilters() {
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  const currentStatus = searchParams.get("status") || "all"
+interface StatusFiltersProps {
+  value: "all" | ReleaseStatus
+  onChange: (next: "all" | ReleaseStatus) => void
+}
 
-  const handleStatusChange = (status: string) => {
-    const params = new URLSearchParams(searchParams.toString())
-
-    if (status === "all") {
-      params.delete("status")
-    } else {
-      params.set("status", status)
-    }
-
-    router.replace(`/releases?${params.toString()}`)
-  }
+export function StatusFilters({ value, onChange }: StatusFiltersProps) {
+  const currentStatus = value
 
   return (
     <div className="flex flex-wrap gap-2">
@@ -40,7 +30,7 @@ export function StatusFilters() {
         return (
           <button
             key={option.value}
-            onClick={() => handleStatusChange(option.value)}
+            onClick={() => onChange(option.value)}
             className={cn(
               "px-4 py-2 text-sm font-medium uppercase tracking-wide rounded transition-colors border-2",
               isActive

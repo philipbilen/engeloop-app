@@ -6,6 +6,8 @@
     --bg-deep-dark: #12151C;
     --bg-main: #1A1E28;
     --bg-interactive: #2C3240;
+    --bg-primary: #1A1E28; /* Alias for backwards compatibility */
+    --bg-secondary: #2C3240; /* Alias for backwards compatibility */
     --bg-tertiary: #434C5E; /* Kept for consistency if needed, but prefer the new ones */
 
     /* New Theme - Text Hierarchy */
@@ -18,9 +20,13 @@
 
     /* New Theme - Accent Colors */
     --accent-primary: #00E0FF; /* Vibrant Cyan */
+    --accent-primary-rgb: 0, 224, 255;
     --accent-success: #A3BE8C;
+    --accent-success-rgb: 163, 190, 140;
     --accent-warning: #EBCB8B;
+    --accent-warning-rgb: 235, 203, 139;
     --accent-danger: #BF616A;
+    --accent-danger-rgb: 191, 97, 106;
 
     /* New Theme - Border */
     --border-primary: #2C3240; /* Using interactive color for borders */

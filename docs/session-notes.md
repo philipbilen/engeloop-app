@@ -72,6 +72,35 @@ This phase focused on a comprehensive overhaul of the application's visual desig
     *   Resolved various build errors, including module not found and parsing issues.
     *   Addressed all linting warnings and errors, ensuring code quality and consistency.
 
+#### Phase 5: Releases Dashboard Implementation
+
+This phase introduced a comprehensive, searchable releases dashboard to serve as the primary landing page and navigation hub for the application.
+
+*   **Dashboard Architecture:**
+    *   Created a shared `DashboardLayout` component with sidebar navigation at `/releases` route.
+    *   Implemented using Next.js route groups `(dashboard)` for clean URL structure.
+    *   Server Component architecture with URL search params for state management (search, filters, sorting).
+*   **Releases Table Features:**
+    *   Multi-column sortable table displaying: Release Date (stacked MMM DD/YYYY), Title/Artist (stacked), Type, UPC, and Status.
+    *   Clickable rows for direct navigation to release detail/edit pages.
+    *   Artist display following DSP conventions (comma/ampersand formatting, max 4 artists).
+*   **Search & Filter Functionality:**
+    *   Comprehensive search via PostgreSQL RPC function across: title, version, artist names (main + contributors), and catalog numbers.
+    *   Status filtering with 7 workflow stages: planning (shown as "DRAFT"), signed, in_progress, ready_for_delivery, delivered, released, archived.
+    *   Debounced search input (300ms) for optimal performance.
+*   **Database Optimizations:**
+    *   Enabled `pg_trgm` extension for trigram-based text search.
+    *   Created GIN indexes on `artist_profiles.artist_name` and `releases.title` for fast ILIKE queries.
+    *   Added B-tree indexes on foreign key columns (`release_main_artists`, `release_contributors`) for join performance.
+*   **UI Components:**
+    *   Color-coded status badges with visual progression from planning (gray) through to released (green).
+    *   Modern sortable column headers with arrow indicators and smart defaults (dates descending, text ascending).
+    *   Responsive search bar and filter chips interface.
+*   **Bug Fixes:**
+    *   Corrected schema references from `stage_name` to `artist_name` across all queries and utilities.
+    *   Fixed Next.js Link deprecation warnings by removing `legacyBehavior` pattern.
+    *   Resolved `pg_trgm` extension ordering issue in migrations.
+
 #### Current Status
 
-The application is now a powerful tool that accurately reflects the documented release management process. It features a complete, end-to-end workflow for creating a release, managing its metadata, artists, tracks, deal terms (Release Schedules), and financial splits. The user interface is significantly more intuitive, visually appealing, and robust, with optimized search capabilities.
+The application is now a powerful tool that accurately reflects the documented release management process. It features a complete, end-to-end workflow starting from the releases dashboard, through creating/editing releases, managing metadata, artists, tracks, deal terms (Release Schedules), and financial splits. The user interface is significantly more intuitive, visually appealing, and robust, with optimized search capabilities and a professional dashboard for navigating all releases.

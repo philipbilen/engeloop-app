@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useTransition } from "react"
 import { Database } from "@/lib/supabase/types"
 import {
   createTrack,
@@ -14,8 +14,31 @@ import { AutosaveIndicator } from "@/components/shared/autosave-indicator"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { AddArtistModal } from "@/components/shared/add-artist-modal"
+import { AddContributorModal } from "@/components/shared/add-contributor-modal"
+import {
+  addTrackMainArtist,
+  removeTrackMainArtist,
+  addTrackContributor,
+  removeTrackContributor,
+} from "@/lib/actions/track-links"
 
-type Track = Database["public"]["Tables"]["tracks"]["Row"]
+type Track = Database["public"]["Tables"]["tracks"]["Row"] & {
+  track_main_artists?: Array<{
+    artist_profiles?: Database["public"]["Tables"]["artist_profiles"]["Row"]
+    position?: number | null
+    inherited_from_release?: boolean | null
+    artist_profile_id?: string
+  }>
+  track_contributors?: Array<{
+    id: string
+    artist_profiles?: Database["public"]["Tables"]["artist_profiles"]["Row"]
+    artist_profile_id: string
+    role: Database["public"]["Enums"]["credit_role"]
+    role_custom?: string | null
+    inherited_from_release?: boolean | null
+  }>
+}
 
 interface ReleaseTracksSectionProps {
   releaseId: string
@@ -27,11 +50,16 @@ export function ReleaseTracksSection({
   initialTracks,
 }: ReleaseTracksSectionProps) {
   const [tracks, setTracks] = useState<Track[]>(
-    initialTracks.sort((a, b) => a.position - b.position)
+    [...initialTracks].sort((a, b) => {
+      const posA = Number.isFinite(a.position) ? a.position! : 0
+      const posB = Number.isFinite(b.position) ? b.position! : 0
+      return posA - posB
+    })
   )
   const [expandedTrackId, setExpandedTrackId] = useState<string | null>(null)
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null)
   const [isCreating, setIsCreating] = useState(false)
+  const [isApplying, startApplying] = useTransition()
 
   const handleAddTrack = async () => {
     setIsCreating(true)
@@ -103,14 +131,8 @@ export function ReleaseTracksSection({
   }
 
   return (
-    <section
-      className="p-6"
-      style={{
-        border: "2px solid var(--border-primary)",
-        backgroundColor: "var(--bg-secondary)",
-      }}
-    >
-      <div className="flex items-center justify-between mb-4">
+    <section className="space-y-4">
+      <div className="flex items-center justify-between">
         <h2
           className="font-semibold uppercase tracking-wide"
           style={{ color: "var(--text-primary)" }}
@@ -123,9 +145,9 @@ export function ReleaseTracksSection({
       </div>
 
       {/* Track List */}
-      <div className="space-y-2 mb-4">
+      <div className="rounded-md border border-[var(--border-primary)] bg-[var(--bg-main)] divide-y divide-[var(--border-primary)]">
         {tracks.length === 0 ? (
-          <p style={{ color: "var(--text-muted)" }}>No tracks yet</p>
+          <p className="px-4 py-3" style={{ color: "var(--text-muted)" }}>No tracks yet</p>
         ) : (
           tracks.map((track, index) => (
             <TrackRow
@@ -196,7 +218,7 @@ function TrackRow({
       await updateTrack(track.id, releaseId, {
         title: data.title,
         version: data.version || null,
-        duration_ms: parseDuration(data.duration_str),
+        duration_ms: data.duration_str.trim() ? parseDuration(data.duration_str) : null,
         isrc: data.isrc || null,
       })
     },
@@ -208,14 +230,58 @@ function TrackRow({
     setFormData((prev) => ({ ...prev, [field]: value }))
   }
 
+  const [isArtistModalOpen, setArtistModalOpen] = useState(false)
+  const [isContributorModalOpen, setContributorModalOpen] = useState(false)
+  const [isPending, startPending] = useTransition()
+
+  const handleAddTrackArtist = (artist: Database["public"]["Tables"]["artist_profiles"]["Row"]) => {
+    startPending(async () => {
+      await addTrackMainArtist(track.id, artist.id, releaseId)
+    })
+  }
+
+  const handleRemoveTrackArtist = (artistId: string) => {
+    startPending(async () => {
+      await removeTrackMainArtist(track.id, artistId, releaseId)
+    })
+  }
+
+  const handleAddTrackContributor = (artistProfileId: string, role: Database["public"]["Enums"]["credit_role"], role_custom?: string | null) => {
+    startPending(async () => {
+      await addTrackContributor(track.id, artistProfileId, role, releaseId, role_custom)
+    })
+  }
+
+  const handleRemoveTrackContributor = (contributorId: string) => {
+    startPending(async () => {
+      await removeTrackContributor(contributorId, releaseId)
+    })
+  }
+
   return (
     <div
-      style={{
-        border: "2px solid var(--border-primary)",
-        backgroundColor: "var(--bg-tertiary)",
-        opacity: isDragging ? 0.5 : 1,
-      }}
+      className="bg-[var(--bg-secondary)]"
+      style={{ opacity: isDragging ? 0.5 : 1 }}
     >
+      <AddArtistModal
+        isOpen={isArtistModalOpen}
+        onClose={() => setArtistModalOpen(false)}
+        onSelect={handleAddTrackArtist}
+        excludeIds={(track.track_main_artists || []).map((a) => a.artist_profiles?.id || "").filter(Boolean)}
+      />
+      <AddContributorModal
+        isOpen={isContributorModalOpen}
+        onClose={() => setContributorModalOpen(false)}
+        onAdd={handleAddTrackContributor}
+        existingContributors={
+          (track.track_contributors || []).map((c) => ({
+            id: c.id,
+            artist_profile_id: c.artist_profile_id,
+            role: c.role,
+            artist_profiles: c.artist_profiles,
+          })) as any
+        }
+      />
       {/* Track Header */}
       <div
         draggable
@@ -265,14 +331,8 @@ function TrackRow({
 
       {/* Expanded Details */}
       {isExpanded && (
-        <div
-          className="p-4"
-          style={{
-            borderTop: "2px solid var(--border-primary)",
-            backgroundColor: "var(--bg-secondary)",
-          }}
-        >
-          <div className="flex items-center justify-between mb-4">
+        <div className="p-4 border-t border-[var(--border-primary)] bg-[var(--bg-main)] rounded-b-md space-y-6">
+          <div className="flex items-center justify-between">
             <h3
               className="text-sm font-semibold uppercase tracking-wide"
               style={{ color: "var(--text-primary)" }}
@@ -282,7 +342,7 @@ function TrackRow({
             <AutosaveIndicator autosave={autosave} />
           </div>
 
-          <div className="grid grid-cols-2 gap-4 mb-4">
+          <div className="grid grid-cols-2 gap-4">
             {/* Title */}
             <div>
               <Label htmlFor={`track-title-${track.id}`}>Title</Label>
@@ -332,10 +392,114 @@ function TrackRow({
             </div>
           </div>
 
-          {/* Delete Button */}
           <div className="flex justify-end">
             <Button variant="danger" size="sm" onClick={onDelete}>
               DELETE TRACK
+            </Button>
+          </div>
+
+          {/* Track Artists */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <h4 className="text-sm font-semibold uppercase tracking-wide" style={{ color: "var(--text-primary)" }}>
+                Track Artists
+              </h4>
+            </div>
+            <div className="divide-y divide-[var(--border-primary)] rounded-md border border-[var(--border-primary)] bg-[var(--bg-main)]">
+              {(track.track_main_artists || []).map((artist) => (
+                <div
+                  key={artist.artist_profiles?.id || artist.artist_profile_id}
+                  className="flex items-center justify-between px-3 py-2"
+                >
+                  <div className="flex items-center gap-2">
+                    <span className="font-medium" style={{ color: "var(--text-bright)" }}>
+                      {artist.artist_profiles?.artist_name || "Unknown Artist"}
+                    </span>
+                    {artist.inherited_from_release && (
+                      <span className="text-xs px-2 py-1 rounded-full" style={{ backgroundColor: "var(--bg-interactive)", color: "var(--accent-primary)" }}>
+                        Inherited
+                      </span>
+                    )}
+                  </div>
+                  <Button
+                    size="sm"
+                    variant="danger"
+                    onClick={() => handleRemoveTrackArtist(artist.artist_profiles?.id || artist.artist_profile_id || "")}
+                    disabled={isPending}
+                  >
+                    Remove
+                  </Button>
+                </div>
+              ))}
+              {(track.track_main_artists || []).length === 0 && (
+                <p className="text-sm" style={{ color: "var(--text-muted)" }}>
+                  No track artists yet.
+                </p>
+              )}
+            </div>
+            <Button
+              size="sm"
+              variant="secondary"
+              className="w-full"
+              onClick={() => setArtistModalOpen(true)}
+              disabled={isPending}
+            >
+              + Add Track Artist
+            </Button>
+          </div>
+
+          {/* Track Contributors */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <h4 className="text-sm font-semibold uppercase tracking-wide" style={{ color: "var(--text-primary)" }}>
+                Track Contributors
+              </h4>
+            </div>
+            <div className="divide-y divide-[var(--border-primary)] rounded-md border border-[var(--border-primary)] bg-[var(--bg-main)]">
+              {(track.track_contributors || []).map((contrib) => (
+                <div
+                  key={contrib.id}
+                  className="flex items-center justify-between px-3 py-2"
+                >
+                  <div className="flex items-center gap-2">
+                    <div>
+                      <p className="font-medium" style={{ color: "var(--text-bright)" }}>
+                        {contrib.artist_profiles?.artist_name || "Unknown"}
+                      </p>
+                      <p className="text-sm" style={{ color: "var(--text-dim)" }}>
+                        {contrib.role_custom || contrib.role}
+                      </p>
+                    </div>
+                    {contrib.inherited_from_release && (
+                      <span className="text-xs px-2 py-1 rounded-full" style={{ backgroundColor: "var(--bg-interactive)", color: "var(--accent-primary)" }}>
+                        Inherited
+                      </span>
+                    )}
+                  </div>
+                  <Button
+                    size="sm"
+                    variant="danger"
+                    onClick={() => handleRemoveTrackContributor(contrib.id)}
+                    disabled={isPending}
+                  >
+                    Remove
+                  </Button>
+                </div>
+              ))}
+              {(track.track_contributors || []).length === 0 && (
+                <p className="text-sm" style={{ color: "var(--text-muted)" }}>
+                  No track contributors yet.
+                </p>
+              )}
+            </div>
+            <Button
+              size="sm"
+              variant="secondary"
+              className="w-full"
+              onClick={() => setContributorModalOpen(true)}
+              disabled={isPending}
+            >
+              + Add Track Contributor
             </Button>
           </div>
         </div>

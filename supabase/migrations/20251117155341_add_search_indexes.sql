@@ -1,5 +1,8 @@
 -- Add indexes to improve search_releases performance
 
+-- Enable pg_trgm extension first (required for trigram indexes)
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
+
 -- Index for release_main_artists lookups
 CREATE INDEX IF NOT EXISTS idx_release_main_artists_release_id
 ON release_main_artists(release_id);
@@ -24,9 +27,6 @@ ON releases USING gin (title gin_trgm_ops);
 
 CREATE INDEX IF NOT EXISTS idx_releases_catalog_id
 ON releases(internal_catalog_id);
-
--- Enable pg_trgm extension if not already enabled
-CREATE EXTENSION IF NOT EXISTS pg_trgm;
 
 -- Add comments
 COMMENT ON INDEX idx_release_main_artists_release_id IS 'Improve release artist joins';

@@ -18,9 +18,9 @@ function SidebarLink({ href, icon, label }: SidebarLinkProps) {
     <Link
       href={href}
       className={cn(
-        "flex items-center gap-3 px-4 py-3 rounded transition-colors",
+        "flex items-center gap-3 px-3 py-3 rounded-lg transition-colors border border-transparent",
         isActive
-          ? "bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] border-l-4 border-[var(--accent-primary)]"
+          ? "bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] border-[color:rgba(var(--accent-primary-rgb),0.35)]"
           : "text-[var(--text-dim)] hover:bg-[var(--bg-interactive)] hover:text-[var(--text-bright)]"
       )}
     >
@@ -39,7 +39,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
     <div className="flex min-h-screen" style={{ backgroundColor: "var(--bg-deep-dark)" }}>
       {/* Sidebar */}
       <aside
-        className="w-60 flex flex-col border-r-2"
+        className="w-56 flex flex-col border-r"
         style={{
           backgroundColor: "var(--bg-main)",
           borderColor: "var(--border-primary)",
@@ -47,7 +47,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       >
         {/* Header */}
         <div
-          className="p-6 border-b-2"
+          className="p-6 border-b"
           style={{ borderColor: "var(--border-primary)" }}
         >
           <h1

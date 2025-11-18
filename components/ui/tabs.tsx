@@ -29,7 +29,7 @@ export function Tabs({ children, defaultTab }: { children: ReactNode, defaultTab
 
 export function TabList({ children }: { children: ReactNode }) {
   return (
-    <div className="flex items-center" style={{ borderBottom: '2px solid var(--border-primary)' }}>
+    <div className="flex items-center gap-1 border-b" style={{ borderColor: 'var(--border-primary)' }}>
       {children}
     </div>
   )
@@ -42,12 +42,11 @@ export function Tab({ children, label }: { children: ReactNode, label: string })
   return (
     <button
       onClick={() => setActiveTab(label)}
-      className="px-6 py-3 text-sm uppercase tracking-wider transition-colors"
+      className="px-4 py-2.5 text-xs font-semibold uppercase tracking-wide transition-colors rounded-t-md"
       style={{
         color: isActive ? 'var(--text-bright)' : 'var(--text-dimmer)',
-        fontWeight: isActive ? '600' : '500',
+        backgroundColor: isActive ? 'rgba(var(--accent-primary-rgb), 0.08)' : 'transparent',
         borderBottom: isActive ? '2px solid var(--accent-primary)' : '2px solid transparent',
-        marginBottom: '-2px',
       }}
     >
       {children}

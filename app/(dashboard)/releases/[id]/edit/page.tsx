@@ -22,7 +22,21 @@ export default async function ReleaseEditPage({ params }: PageProps) {
     contributorsResult,
     allArtistsResult,
   ] = await Promise.all([
-    supabase.from("releases").select(`*, tracks(*)`).eq("id", id).single(),
+    supabase.from("releases").select(`
+      *,
+      tracks(
+        *,
+        track_main_artists(
+          artist_profiles(*),
+          inherited_from_release,
+          position
+        ),
+        track_contributors(
+          *,
+          artist_profiles(*)
+        )
+      )
+    `).eq("id", id).single(),
     supabase.from("contracts").select("*").order("created_at", { ascending: false }),
     supabase.from("contract_releases").select(`contracts(*)`).eq("release_id", id),
     getAllContacts(),

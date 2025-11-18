@@ -3,86 +3,43 @@
 import { createServerClient } from "@/lib/supabase/server"
 import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
+import { Database } from "@/lib/supabase/types"
 
 export interface CreateReleaseData {
   title: string
   type: "Single" | "EP" | "Album"
   release_date: string | null
   artist_ids: string[] // Array of artist_profile IDs in order
+  contributors?: Array<{
+    artist_profile_id: string
+    role: Database["public"]["Enums"]["credit_role"]
+    role_custom?: string | null
+  }>
 }
 
 export async function createRelease(data: CreateReleaseData) {
   const supabase = createServerClient()
 
   try {
-    console.log("Creating release with data:", data)
+    const { data: created, error } = await supabase.rpc("create_release_full", {
+      p_title: data.title,
+      p_type: data.type,
+      p_release_date: data.release_date,
+      p_artist_ids: data.artist_ids,
+      p_contributors: data.contributors || [],
+    })
 
-    // 1. Generate catalog number
-    const { data: catalogNumber, error: catalogError } = await supabase.rpc(
-      "generate_catalog_number",
-      {
-        p_release_date: data.release_date,
-        p_base_catalog_id: null,
-      }
-    )
+    if (error) throw error
 
-    console.log("Catalog number result:", { catalogNumber, catalogError })
-
-    if (catalogError) {
-      console.error("Catalog generation error:", catalogError)
-      throw catalogError
-    }
-    if (!catalogNumber) throw new Error("Failed to generate catalog number")
-
-    // 2. Create release
-    const { data: release, error: releaseError } = await supabase
-      .from("releases")
-      .insert({
-        title: data.title,
-        type: data.type,
-        release_date: data.release_date,
-        internal_catalog_id: catalogNumber,
-        status: "planning",
-      })
-      .select()
-      .single()
-
-    console.log("Release creation result:", { release, releaseError })
-
-    if (releaseError) {
-      console.error("Release creation error:", releaseError)
-      throw releaseError
-    }
-    if (!release) throw new Error("Failed to create release")
-
-    // 3. Create main artists with positions
-    if (data.artist_ids.length > 0) {
-      const { error: artistsError } = await supabase
-        .from("release_main_artists")
-        .insert(
-          data.artist_ids.map((artist_id, index) => ({
-            release_id: release.id,
-            artist_profile_id: artist_id,
-            position: index + 1,
-          }))
-        )
-
-      if (artistsError) throw artistsError
-    }
-
-    // 4. If type is Single, create a default track
-    if (data.type === "Single") {
-      await supabase.from("tracks").insert({
-        release_id: release.id,
-        title: data.title,
-        explicit: false,
-      })
+    const result = Array.isArray(created) ? created[0] : created
+    if (!result?.release_id) {
+      throw new Error("Failed to create release (missing id)")
     }
 
     revalidatePath("/releases")
-    redirect(`/releases/${release.id}/edit`)
+    redirect(`/releases/${result.release_id}/edit`)
   } catch (error) {
-    console.error("Error creating release:", error)
+
     throw error
   }
 }
@@ -113,7 +70,7 @@ export async function updateRelease(
 
     revalidatePath(`/releases/${releaseId}/edit`)
   } catch (error) {
-    console.error("Error updating release:", error)
+
     throw error
   }
 }
@@ -158,7 +115,7 @@ export async function updateReleaseStatus(
     revalidatePath(`/releases/${releaseId}/edit`)
     return { success: true }
   } catch (error) {
-    console.error("Error updating release status:", error)
+
     throw error
   }
 }

@@ -3,47 +3,14 @@ import { cn } from "@/lib/utils"
 
 export type SelectProps = React.ComponentPropsWithoutRef<'select'>;
 
+const selectBaseClasses =
+  "w-full h-10 rounded-md border-2 border-[var(--border-primary)] bg-[var(--bg-main)] px-3 text-sm text-[var(--text-bright)] placeholder:text-[var(--text-dimmer)] transition-all duration-150 ease-out focus-visible:outline-none focus-visible:border-[var(--accent-primary)] focus-visible:shadow-[0_0_0_3px_rgba(0,224,255,0.18)] focus-visible:ring-0 hover:border-[color:rgba(var(--accent-primary-rgb),0.5)] disabled:opacity-50 disabled:cursor-not-allowed";
+
 const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
-  ({ className, style, onFocus, onBlur, children, ...props }, ref) => {
-    const [isFocused, setIsFocused] = React.useState(false)
-
-    const handleFocus = (e: React.FocusEvent<HTMLSelectElement>) => {
-      setIsFocused(true)
-      if (onFocus) onFocus(e)
-    }
-
-    const handleBlur = (e: React.FocusEvent<HTMLSelectElement>) => {
-      setIsFocused(false)
-      if (onBlur) onBlur(e)
-    }
-
-    const baseStyles: React.CSSProperties = {
-      backgroundColor: 'var(--bg-main)',
-      borderWidth: '2px',
-      borderStyle: 'solid',
-      borderColor: 'var(--border-primary)',
-      color: 'var(--text-bright)',
-      transition: 'border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out',
-    }
-
-    const focusStyles: React.CSSProperties = {
-      borderColor: 'var(--accent-primary)',
-      boxShadow: '0 0 0 2px rgba(0, 224, 255, 0.3)',
-    }
-
+  ({ className, children, ...props }, ref) => {
     return (
       <select
-        className={cn(
-          "w-full px-3 py-2 rounded focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed",
-          className
-        )}
-        style={{
-          ...baseStyles,
-          ...(isFocused ? focusStyles : {}),
-          ...style,
-        }}
-        onFocus={handleFocus}
-        onBlur={handleBlur}
+        className={cn(selectBaseClasses, className)}
         ref={ref}
         {...props}
       >

@@ -1,6 +1,5 @@
 "use client"
 
-import { useRouter, useSearchParams } from "next/navigation"
 import { cn } from "@/lib/utils"
 
 export type SortColumn = "release_date" | "title" | "status"
@@ -11,21 +10,17 @@ interface SortableHeaderProps {
   column: SortColumn
   label: string
   className?: string
+  currentSort: SortOption
+  onSortChange: (next: SortOption) => void
 }
 
-export function SortableHeader({ column, label, className }: SortableHeaderProps) {
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  const currentSort = (searchParams.get("sort") || "release_date_desc") as SortOption
-
+export function SortableHeader({ column, label, className, currentSort, onSortChange }: SortableHeaderProps) {
   // Parse current sort
   const [activeColumn, direction] = currentSort.split("_") as [SortColumn, SortDirection]
   const isActive = activeColumn === column
   const isAsc = direction === "asc"
 
   const handleClick = () => {
-    const params = new URLSearchParams(searchParams.toString())
-
     let newSort: SortOption
     if (isActive) {
       // Toggle direction
@@ -35,8 +30,7 @@ export function SortableHeader({ column, label, className }: SortableHeaderProps
       newSort = column === "release_date" ? `${column}_desc` : `${column}_asc`
     }
 
-    params.set("sort", newSort)
-    router.replace(`/releases?${params.toString()}`)
+    onSortChange(newSort)
   }
 
   return (
