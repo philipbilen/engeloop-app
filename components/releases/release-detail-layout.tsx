@@ -26,7 +26,6 @@ interface ReleaseDetailLayoutProps {
   allSchedules: Agreement[]
   allContacts: Contact[]
   contributors: Contributor[]
-  allArtists: ArtistProfile[]
 }
 
 export function ReleaseDetailLayout({
@@ -36,7 +35,6 @@ export function ReleaseDetailLayout({
   allSchedules,
   allContacts,
   contributors,
-  allArtists,
 }: ReleaseDetailLayoutProps) {
   return (
     <main className="max-w-6xl mx-auto px-8 py-10 space-y-8">

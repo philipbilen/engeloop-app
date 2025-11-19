@@ -3,7 +3,6 @@ import { notFound } from "next/navigation"
 import { ReleaseDetailLayout } from "@/components/releases/release-detail-layout"
 import { getAllContacts } from "@/lib/actions/agreements"
 import { getContributorsByRelease } from "@/lib/actions/contributors"
-import { getAllArtistProfiles } from "@/lib/actions/artists"
 
 interface PageProps {
   params: Promise<{ id: string }>
@@ -20,7 +19,6 @@ export default async function ReleaseEditPage({ params }: PageProps) {
     linkedSchedulesResult,
     allContactsResult,
     contributorsResult,
-    allArtistsResult,
   ] = await Promise.all([
     supabase.from("releases").select(`
       *,
@@ -41,7 +39,6 @@ export default async function ReleaseEditPage({ params }: PageProps) {
     supabase.from("contract_releases").select(`contracts(*)`).eq("release_id", id),
     getAllContacts(),
     getContributorsByRelease(id),
-    getAllArtistProfiles(),
   ])
 
   const { data: release, error: releaseError } = releaseResult
@@ -53,7 +50,6 @@ export default async function ReleaseEditPage({ params }: PageProps) {
   const linkedSchedules = linkedSchedulesResult.data?.map(item => item.contracts).filter(Boolean) || []
   const allContacts = allContactsResult || []
   const contributors = contributorsResult || []
-  const allArtists = allArtistsResult || []
 
   // Fetch main artists separately with the correct join
   const { data: artistLinks } = await supabase
@@ -75,7 +71,6 @@ export default async function ReleaseEditPage({ params }: PageProps) {
       allSchedules={allSchedules || []}
       allContacts={allContacts}
       contributors={contributors}
-      allArtists={allArtists}
     />
   )
 }

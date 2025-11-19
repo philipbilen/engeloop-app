@@ -59,7 +59,6 @@ export function ReleaseTracksSection({
   const [expandedTrackId, setExpandedTrackId] = useState<string | null>(null)
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null)
   const [isCreating, setIsCreating] = useState(false)
-  const [isApplying, startApplying] = useTransition()
 
   const handleAddTrack = async () => {
     setIsCreating(true)
@@ -275,11 +274,9 @@ function TrackRow({
         onAdd={handleAddTrackContributor}
         existingContributors={
           (track.track_contributors || []).map((c) => ({
-            id: c.id,
-            artist_profile_id: c.artist_profile_id,
+            artist_profiles: c.artist_profiles ?? null,
             role: c.role,
-            artist_profiles: c.artist_profiles,
-          })) as any
+          }))
         }
       />
       {/* Track Header */}

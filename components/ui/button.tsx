@@ -18,17 +18,17 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 
     const variantClasses = {
       primary:
-        "bg-[var(--accent-primary)] text-[var(--bg-deep-dark)] border-2 border-[var(--accent-primary)] hover:brightness-[1.1] active:brightness-[0.95]",
+        "bg-[var(--accent-primary)] text-white border border-[var(--accent-primary)] shadow-[0_6px_16px_rgba(79,70,229,0.18)] hover:shadow-[0_8px_18px_rgba(79,70,229,0.2)] active:brightness-[0.96]",
       secondary:
-        "bg-transparent text-[var(--accent-primary)] border-2 border-[var(--accent-primary)] hover:bg-[color:rgba(var(--accent-primary-rgb),0.14)] active:bg-[color:rgba(var(--accent-primary-rgb),0.2)]",
+        "bg-[color:rgba(var(--accent-primary-rgb),0.08)] text-[var(--accent-primary)] border border-[color:rgba(var(--accent-primary-rgb),0.28)] hover:bg-[color:rgba(var(--accent-primary-rgb),0.12)] active:bg-[color:rgba(var(--accent-primary-rgb),0.18)]",
       danger:
-        "bg-[var(--accent-danger)] text-[var(--text-bright)] border-2 border-[var(--accent-danger)] hover:brightness-[1.05] active:brightness-[0.95]",
+        "bg-[var(--accent-danger)] text-white border border-[var(--accent-danger)] shadow-[0_6px_16px_rgba(239,68,68,0.14)] hover:brightness-[1.02] active:brightness-[0.95]",
       warning:
-        "bg-[var(--accent-warning)] text-[var(--bg-deep-dark)] border-2 border-[var(--accent-warning)] hover:brightness-[1.05] active:brightness-[0.95]",
+        "bg-[var(--accent-warning)] text-[var(--text-bright)] border border-[var(--accent-warning)] shadow-[0_4px_12px_rgba(245,158,11,0.14)] hover:brightness-[1.02] active:brightness-[0.95]",
       ghost:
-        "bg-transparent text-[var(--text-dim)] border-2 border-transparent hover:border-[var(--border-primary)] hover:bg-[color:rgba(44,50,64,0.6)] hover:text-[var(--text-bright)] active:bg-[color:rgba(44,50,64,0.85)] active:text-[var(--text-bright)]",
+        "bg-transparent text-[var(--text-dim)] border border-transparent hover:border-[var(--border-primary)] hover:bg-[var(--bg-interactive)] hover:text-[var(--text-bright)] active:bg-[var(--bg-tertiary)] active:text-[var(--text-bright)]",
       icon:
-        "bg-transparent text-[var(--text-dimmer)] border-2 border-transparent hover:bg-[color:rgba(44,50,64,0.7)] hover:text-[var(--text-bright)] active:bg-[color:rgba(44,50,64,0.9)]",
+        "bg-transparent text-[var(--text-dimmer)] border border-transparent hover:bg-[var(--bg-interactive)] hover:text-[var(--text-bright)] active:bg-[var(--bg-tertiary)]",
     }
 
     return (

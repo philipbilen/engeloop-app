@@ -19,10 +19,10 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
       <div
         ref={ref}
         className={cn(
-          "rounded-lg border-2 border-[var(--border-primary)] bg-[var(--bg-secondary)] transition-all duration-150",
+          "rounded-xl border border-[var(--border-primary)] bg-[var(--bg-secondary)] transition-all duration-150 shadow-[var(--shadow-soft)]",
           hoverable
-            ? "hover:border-[var(--accent-primary)] hover:shadow-[0_10px_30px_rgba(0,0,0,0.28)]"
-            : "shadow-sm",
+            ? "hover:border-[var(--accent-primary)] hover:shadow-[0_10px_26px_rgba(15,23,42,0.1)] hover:-translate-y-[1px]"
+            : "",
           paddingClasses[padding],
           className
         )}
@@ -34,7 +34,7 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
 
 Card.displayName = "Card"
 
-export interface CardSectionProps extends React.HTMLAttributes<HTMLDivElement> {}
+type CardSectionProps = React.HTMLAttributes<HTMLDivElement>
 
 const CardHeader = React.forwardRef<HTMLDivElement, CardSectionProps>(
   ({ className, ...props }, ref) => (

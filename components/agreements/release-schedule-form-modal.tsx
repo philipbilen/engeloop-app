@@ -5,9 +5,8 @@ import { Modal } from "@/components/ui/modal"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-// import { Select } from "@/components/ui/select" // Removed unused import
 import { createAgreement } from "@/lib/actions/agreements"
-import { Database } from "@/lib/supabase/types"
+import { Database, type ContractTermType } from "@/lib/supabase/types"
 import { Tooltip } from "@/components/ui/tooltip"
 
 type Agreement = Database["public"]["Tables"]["contracts"]["Row"]
@@ -35,7 +34,9 @@ export function ReleaseScheduleFormModal({
   const [formData, setFormData] = useState({
     label_share_percent: schedule?.label_share_percent?.toString() || "50",
     licensor_pool_percent: schedule?.licensor_pool_percent?.toString() || "50",
-    term: "Perpetual",
+    term_type: (schedule?.term_type as ContractTermType | null) || "perpetual",
+    term_value_years: schedule?.term_value_years?.toString() || "",
+    auto_renew_interval_years: schedule?.auto_renew_interval_years?.toString() || "",
     territory: schedule?.territory || "World",
     advance: "0",
     recoupable_costs: "0",
@@ -85,6 +86,7 @@ export function ReleaseScheduleFormModal({
     if (isNaN(labelShare) || isNaN(licensorShare)) return "Share percentages must be valid numbers"
     if (labelShare + licensorShare !== 100) return "Label and licensor shares must sum to 100%"
     if (labelShare < 0 || labelShare > 100 || licensorShare < 0 || licensorShare > 100) return "Share percentages must be between 0 and 100"
+    if (formData.term_type === "fixed" && !formData.term_value_years) return "Fixed term requires a term length"
     return null
   }
 
@@ -102,6 +104,9 @@ export function ReleaseScheduleFormModal({
         label_share_percent: parseFloat(formData.label_share_percent),
         licensor_pool_percent: parseFloat(formData.licensor_pool_percent),
         territory: formData.territory,
+        term_type: formData.term_type as ContractTermType,
+        term_value_years: formData.term_value_years ? parseInt(formData.term_value_years, 10) : null,
+        auto_renew_interval_years: formData.auto_renew_interval_years ? parseInt(formData.auto_renew_interval_years, 10) : null,
         signatoryIds: signatories.map(s => s.id)
       }
       if (schedule) {
@@ -153,9 +158,38 @@ export function ReleaseScheduleFormModal({
                 </Label>
                 <Input id="schedule-licensor-pool" type="number" step="0.01" min="0" max="100" value={formData.licensor_pool_percent} onChange={(e) => handleChange("licensor_pool_percent", e.target.value)} required />
               </div>
-              <div>
-                <Label htmlFor="schedule-term">Term</Label>
-                <Input id="schedule-term" value={formData.term} onChange={(e) => handleChange("term", e.target.value)} />
+              <div className="space-y-1">
+                <Label htmlFor="schedule-term-type">Term</Label>
+                <div className="grid grid-cols-2 gap-2">
+                  <select
+                    id="schedule-term-type"
+                    value={formData.term_type}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, term_type: e.target.value as ContractTermType }))}
+                    className="h-10 rounded-md border border-[var(--border-primary)] bg-white px-3 text-sm text-[var(--text-bright)]"
+                  >
+                    <option value="perpetual">Perpetual</option>
+                    <option value="fixed">Fixed</option>
+                    <option value="auto_renew">Auto-renew</option>
+                    <option value="evergreen_with_notice">Evergreen</option>
+                  </select>
+                  <Input
+                    id="schedule-term-value"
+                    type="number"
+                    placeholder={formData.term_type === "auto_renew" ? "Renewal yrs" : "Term yrs"}
+                    value={formData.term_value_years}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, term_value_years: e.target.value }))}
+                    disabled={formData.term_type === "perpetual"}
+                  />
+                </div>
+                {formData.term_type === "auto_renew" && (
+                  <Input
+                    id="schedule-auto-renew"
+                    type="number"
+                    placeholder="Auto-renew interval (yrs)"
+                    value={formData.auto_renew_interval_years}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, auto_renew_interval_years: e.target.value }))}
+                  />
+                )}
               </div>
               <div>
                 <Label htmlFor="schedule-territory">Territory</Label>

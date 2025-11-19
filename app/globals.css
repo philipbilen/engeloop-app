@@ -2,34 +2,37 @@
 
 @layer base {
   :root {
-    /* New Theme - Background Hierarchy */
-    --bg-deep-dark: #12151C;
-    --bg-main: #1A1E28;
-    --bg-interactive: #2C3240;
-    --bg-primary: #1A1E28; /* Alias for backwards compatibility */
-    --bg-secondary: #2C3240; /* Alias for backwards compatibility */
-    --bg-tertiary: #434C5E; /* Kept for consistency if needed, but prefer the new ones */
+    /* Background hierarchy */
+    --bg-page: #F5F7FB;
+    --bg-deep-dark: var(--bg-page); /* alias kept for existing references */
+    --bg-main: #FFFFFF;
+    --bg-interactive: #EEF2F7;
+    --bg-primary: var(--bg-main); /* alias */
+    --bg-secondary: #FFFFFF;
+    --bg-tertiary: #F1F4F9;
 
-    /* New Theme - Text Hierarchy */
-    --text-bright: #FFFFFF;
-    --text-dim: #B0B8C4;
-    --text-dimmer: #8A94A6;
-    --text-primary: #ECEFF4; /* Kept for backwards compatibility */
-    --text-secondary: #D8DEE9; /* Kept for backwards compatibility */
-    --text-muted: #8A94A6; /* Re-aliased */
+    /* Text hierarchy */
+    --text-bright: #0F172A;
+    --text-dim: #3C4A63;
+    --text-dimmer: #6B7280;
+    --text-primary: var(--text-bright);
+    --text-secondary: var(--text-dim);
+    --text-muted: var(--text-dimmer);
 
-    /* New Theme - Accent Colors */
-    --accent-primary: #00E0FF; /* Vibrant Cyan */
-    --accent-primary-rgb: 0, 224, 255;
-    --accent-success: #A3BE8C;
-    --accent-success-rgb: 163, 190, 140;
-    --accent-warning: #EBCB8B;
-    --accent-warning-rgb: 235, 203, 139;
-    --accent-danger: #BF616A;
-    --accent-danger-rgb: 191, 97, 106;
+    /* Accent colors */
+    --accent-primary: #4F46E5; /* Indigo */
+    --accent-primary-rgb: 79, 70, 229;
+    --accent-success: #16A34A;
+    --accent-success-rgb: 22, 163, 74;
+    --accent-warning: #F59E0B;
+    --accent-warning-rgb: 245, 158, 11;
+    --accent-danger: #EF4444;
+    --accent-danger-rgb: 239, 68, 68;
 
-    /* New Theme - Border */
-    --border-primary: #2C3240; /* Using interactive color for borders */
+    /* Border & shadow */
+    --border-primary: #E2E8F0;
+    --shadow-card: 0 8px 22px rgba(15, 23, 42, 0.06);
+    --shadow-soft: 0 4px 14px rgba(15, 23, 42, 0.05);
   }
 
   * {
@@ -39,7 +42,7 @@
   }
 
   body {
-    background-color: var(--bg-deep-dark);
+    background-color: var(--bg-page);
     color: var(--text-primary);
     font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;

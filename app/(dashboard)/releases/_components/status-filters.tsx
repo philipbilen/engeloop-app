@@ -32,10 +32,10 @@ export function StatusFilters({ value, onChange }: StatusFiltersProps) {
             key={option.value}
             onClick={() => onChange(option.value)}
             className={cn(
-              "px-4 py-2 text-sm font-medium uppercase tracking-wide rounded transition-colors border-2",
+              "px-4 py-2 text-xs font-semibold uppercase tracking-wide rounded-full transition-all border shadow-sm",
               isActive
-                ? "border-[var(--accent-primary)] bg-[var(--accent-primary)]/10 text-[var(--accent-primary)]"
-                : "border-[var(--border-primary)] text-[var(--text-dim)] hover:border-[var(--accent-primary)]/50 hover:text-[var(--text-bright)]"
+                ? "border-[color:rgba(var(--accent-primary-rgb),0.4)] bg-[color:rgba(var(--accent-primary-rgb),0.12)] text-[var(--accent-primary)] shadow-[0_4px_12px_rgba(79,70,229,0.12)]"
+                : "border-[var(--border-primary)] text-[var(--text-dim)] hover:border-[var(--accent-primary)]/45 hover:bg-[var(--bg-interactive)] hover:text-[var(--text-bright)]"
             )}
           >
             {option.label}

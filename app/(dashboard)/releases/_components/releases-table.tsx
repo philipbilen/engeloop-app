@@ -1,14 +1,9 @@
 "use client"
 
 import { memo, useCallback, useMemo } from "react"
-import { useRouter } from "next/navigation"
 import { StatusBadge } from "@/components/ui/badge"
 import { SortableHeader, type SortOption } from "./sortable-header"
 import type { ReleaseStatus } from "@/components/ui/badge"
-
-interface Artist {
-  stage_name: string
-}
 
 export interface ReleaseRow {
   id: string
@@ -25,6 +20,7 @@ interface ReleasesTableProps {
   releases: ReleaseRow[]
   currentSort: SortOption
   onSortChange: (next: SortOption) => void
+  onSelectRelease?: (id: string) => void
 }
 
 function formatReleaseDate(dateString: string | null) {
@@ -41,19 +37,23 @@ function formatReleaseDate(dateString: string | null) {
   }
 }
 
-const ReleaseRowComponent = memo(function ReleaseRow({ release }: { release: ReleaseRow }) {
-  const router = useRouter()
-
+const ReleaseRowComponent = memo(function ReleaseRow({
+  release,
+  onSelect,
+}: {
+  release: ReleaseRow
+  onSelect?: (id: string) => void
+}) {
   const formattedDate = useMemo(() => formatReleaseDate(release.release_date), [release.release_date])
 
   const handleClick = useCallback(() => {
-    router.push(`/releases/${release.id}/edit`)
-  }, [release.id, router])
+    onSelect?.(release.id)
+  }, [onSelect, release.id])
 
   return (
     <tr
       onClick={handleClick}
-      className="border-b transition-colors hover:bg-[var(--bg-interactive)] cursor-pointer group"
+      className="border-b last:border-0 transition-colors hover:bg-[var(--bg-interactive)] cursor-pointer group"
       style={{ borderColor: "var(--border-primary)" }}
     >
       {/* Release Date - Stacked */}
@@ -103,12 +103,12 @@ const ReleaseRowComponent = memo(function ReleaseRow({ release }: { release: Rel
 
 ReleaseRowComponent.displayName = "ReleaseRow"
 
-function ReleasesTableComponent({ releases, currentSort, onSortChange }: ReleasesTableProps) {
+function ReleasesTableComponent({ releases, currentSort, onSortChange, onSelectRelease }: ReleasesTableProps) {
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full border-collapse">
+    <div className="overflow-x-auto rounded-xl border border-[var(--border-primary)] bg-white shadow-[var(--shadow-card)]">
+      <table className="w-full border-collapse text-left">
         <thead
-          className="border-b-2"
+          className="border-b-2 bg-[var(--bg-tertiary)]"
           style={{ borderColor: "var(--border-primary)" }}
         >
           <tr>
@@ -160,7 +160,11 @@ function ReleasesTableComponent({ releases, currentSort, onSortChange }: Release
             </tr>
           ) : (
             releases.map((release) => (
-              <ReleaseRowComponent key={release.id} release={release} />
+              <ReleaseRowComponent
+                key={release.id}
+                release={release}
+                onSelect={onSelectRelease}
+              />
             ))
           )}
         </tbody>

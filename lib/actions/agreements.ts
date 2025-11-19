@@ -19,6 +19,12 @@ export async function createAgreement(data: {
   label_share_percent: number
   licensor_pool_percent: number
   territory?: string | null
+  term_type?: string | null
+  term_value_years?: number | null
+  auto_renew_interval_years?: number | null
+  notice_period_days?: number | null
+  effective_at?: string | null
+  expires_at?: string | null
   signatoryIds: string[]
 }) {
   const supabase = createServerClient()

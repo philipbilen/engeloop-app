@@ -10,6 +10,7 @@ export type ReleaseType = 'Single' | 'EP' | 'Album'
 export type ReleaseStatus = 'planning' | 'signed' | 'in_progress' | 'delivered' | 'released' | 'archived'
 export type ContractType = 'MLA' | 'Release Schedule' | 'Remix Agreement' | 'Other'
 export type ContractStatus = 'draft' | 'sent' | 'executed' | 'archived'
+export type ContractTermType = 'fixed' | 'perpetual' | 'auto_renew' | 'evergreen_with_notice'
 export type CreditRole = 'Producer' | 'Composer' | 'Remixer' | 'Featured Artist' | 'Mixer' | 'Engineer' | 'Other'
 export type ShareRoleContext = 'Master Owner' | 'Producer' | 'Songwriter' | 'Featured Artist' | 'Sample Clearance' | 'Remix Rights' | 'Other'
 
@@ -176,6 +177,12 @@ export interface Database {
           notes: string | null
           label_share_percent: number
           licensor_pool_percent: number
+          term_type: ContractTermType | null
+          term_value_years: number | null
+          auto_renew_interval_years: number | null
+          notice_period_days: number | null
+          effective_at: string | null
+          expires_at: string | null
           created_at: string
           updated_at: string
         }
@@ -189,6 +196,12 @@ export interface Database {
           notes?: string | null
           label_share_percent?: number
           licensor_pool_percent?: number
+          term_type?: ContractTermType | null
+          term_value_years?: number | null
+          auto_renew_interval_years?: number | null
+          notice_period_days?: number | null
+          effective_at?: string | null
+          expires_at?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -202,6 +215,12 @@ export interface Database {
           notes?: string | null
           label_share_percent?: number
           licensor_pool_percent?: number
+          term_type?: ContractTermType | null
+          term_value_years?: number | null
+          auto_renew_interval_years?: number | null
+          notice_period_days?: number | null
+          effective_at?: string | null
+          expires_at?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -328,6 +347,7 @@ export interface Database {
       release_status: ReleaseStatus
       contract_type: ContractType
       contract_status: ContractStatus
+      contract_term_type: ContractTermType
       credit_role: CreditRole
       share_role_context: ShareRoleContext
     }
