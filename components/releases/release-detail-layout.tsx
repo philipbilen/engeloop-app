@@ -4,10 +4,9 @@ import { Database } from "@/lib/supabase/types"
 import { ReleaseMetadataSection } from "./release-metadata-section"
 import { ReleaseMainArtistsSection } from "./release-main-artists-section"
 import { ReleaseTracksSection } from "./release-tracks-section"
-import { ReleaseSchedulesSection } from "./release-schedules-section"
 import { Tabs, TabList, Tab, TabPanel } from "@/components/ui/tabs"
 import { ReleaseContributorsSection } from "./release-contributors-section"
-import { FinancialsSection } from "./financials-section"
+import { LegalFinancialSection } from "./legal-financial-section"
 import { StatusBadge, type ReleaseStatus } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -84,8 +83,7 @@ export function ReleaseDetailLayout({
           <Tab label="core-info">Core Info</Tab>
           <Tab label="artists-credits">Artists & Credits</Tab>
           <Tab label="tracks">Tracks</Tab>
-          <Tab label="schedules">Release Schedules</Tab>
-          <Tab label="financials">Financials</Tab>
+          <Tab label="legal-financial">Legal & Financial</Tab>
         </TabList>
 
         <div className="mt-6">
@@ -121,22 +119,13 @@ export function ReleaseDetailLayout({
             </Card>
           </TabPanel>
 
-          <TabPanel label="schedules">
+          <TabPanel label="legal-financial">
             <Card padding="lg">
-              <ReleaseSchedulesSection
+              <LegalFinancialSection
                 release={release}
+                tracks={release.tracks || []}
                 linkedSchedules={linkedSchedules}
                 allSchedules={allSchedules}
-                allContacts={allContacts}
-              />
-            </Card>
-          </TabPanel>
-          
-          <TabPanel label="financials">
-            <Card padding="lg">
-              <FinancialsSection
-                release={release}
-                linkedSchedules={linkedSchedules}
                 allContacts={allContacts}
               />
             </Card>

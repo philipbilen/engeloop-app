@@ -28,7 +28,7 @@ export function SearchBar({ value, onChange }: SearchBarProps) {
         placeholder="Search by title, artist, catalog number..."
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full bg-white border-[var(--border-primary)] text-[var(--text-bright)] pl-9"
+        className="w-full bg-[var(--nord3)] border-[var(--border-primary)] text-[var(--text-bright)] pl-9 placeholder:text-[var(--text-dimmer)]"
       />
     </div>
   )

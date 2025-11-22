@@ -7,9 +7,10 @@ import { cn } from "@/lib/utils"
 interface SidebarLinkProps {
   href: string
   label: string
+  icon?: string
 }
 
-function SidebarLink({ href, label }: SidebarLinkProps) {
+function SidebarLink({ href, label, icon }: SidebarLinkProps) {
   const pathname = usePathname()
   const isActive = pathname.startsWith(href)
 
@@ -23,7 +24,11 @@ function SidebarLink({ href, label }: SidebarLinkProps) {
           : "text-white/70 border-transparent hover:bg-white/5 hover:text-white hover:border-white/10"
       )}
     >
-      <span className="h-2 w-2 rounded-full border border-current opacity-60" aria-hidden />
+      {icon ? (
+        <span className="text-lg leading-none">{icon}</span>
+      ) : (
+        <span className="h-2 w-2 rounded-full border border-current opacity-60" aria-hidden />
+      )}
       <span className="font-medium uppercase text-sm tracking-wide">{label}</span>
     </Link>
   )
@@ -68,6 +73,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
         {/* Navigation */}
         <nav className="flex-1 p-4 space-y-2">
           <SidebarLink href="/releases" icon="📀" label="Releases" />
+          <SidebarLink href="/contracts" icon="📜" label="Contracts" />
           <SidebarLink href="/people" icon="👥" label="People & Artists" />
         </nav>
       </aside>

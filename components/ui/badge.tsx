@@ -9,6 +9,9 @@ export type ReleaseStatus =
   | "delivered"
   | "released"
   | "archived"
+  | "draft"
+  | "sent"
+  | "executed"
 
 interface StatusBadgeProps {
   status: ReleaseStatus
@@ -19,68 +22,100 @@ const statusConfig: Record<ReleaseStatus, { label: string; style: React.CSSPrope
   planning: {
     label: "DRAFT",
     style: {
-      backgroundColor: 'rgba(99, 102, 241, 0.08)',
-      color: '#312E81',
-      borderColor: 'rgba(99, 102, 241, 0.35)',
+      backgroundColor: 'var(--nord3)',
+      color: 'var(--frost-cyan)',
+      borderColor: 'var(--frost-cyan)',
     },
   },
   signed: {
     label: "SIGNED",
     style: {
-      backgroundColor: 'rgba(var(--accent-primary-rgb), 0.12)',
-      color: 'var(--accent-primary)',
-      borderColor: 'rgba(var(--accent-primary-rgb), 0.45)',
+      backgroundColor: 'var(--nord3)',
+      color: 'var(--frost-blue)',
+      borderColor: 'var(--frost-blue)',
     },
   },
   in_progress: {
     label: "IN PROGRESS",
     style: {
-      backgroundColor: 'rgba(var(--accent-warning-rgb), 0.12)',
-      color: '#B45309',
-      borderColor: 'rgba(var(--accent-warning-rgb), 0.4)',
+      backgroundColor: 'var(--nord3)',
+      color: 'var(--aurora-yellow)',
+      borderColor: 'var(--aurora-yellow)',
     },
   },
   ready_for_delivery: {
-    label: "READY FOR DELIVERY",
+    label: "READY",
     style: {
-      backgroundColor: 'rgba(var(--accent-success-rgb), 0.12)',
-      color: 'var(--accent-success)',
-      borderColor: 'rgba(var(--accent-success-rgb), 0.55)',
+      backgroundColor: 'var(--nord3)',
+      color: 'var(--aurora-green)',
+      borderColor: 'var(--aurora-green)',
     },
   },
   delivered: {
     label: "DELIVERED",
     style: {
-      backgroundColor: 'rgba(var(--accent-success-rgb), 0.12)',
-      color: '#166534',
-      borderColor: 'rgba(var(--accent-success-rgb), 0.5)',
+      backgroundColor: 'var(--nord3)',
+      color: 'var(--aurora-green)',
+      borderColor: 'var(--aurora-green)',
     },
   },
   released: {
     label: "RELEASED",
     style: {
-      backgroundColor: 'rgba(var(--accent-success-rgb), 0.16)',
-      color: '#166534',
-      borderColor: 'rgba(var(--accent-success-rgb), 0.5)',
+      backgroundColor: 'var(--aurora-green)',
+      color: 'var(--nord0)',
+      borderColor: 'var(--aurora-green)',
     },
   },
   archived: {
     label: "ARCHIVED",
     style: {
-      backgroundColor: '#F3F4F6',
-      color: '#4B5563',
-      borderColor: '#E5E7EB',
+      backgroundColor: 'var(--nord3)',
+      color: 'var(--nord4)',
+      borderColor: 'var(--nord4)',
+    },
+  },
+  // Contract Statuses
+  draft: {
+    label: "DRAFT",
+    style: {
+      backgroundColor: 'var(--nord3)',
+      color: 'var(--frost-cyan)',
+      borderColor: 'var(--frost-cyan)',
+    },
+  },
+  sent: {
+    label: "SENT",
+    style: {
+      backgroundColor: 'var(--nord3)',
+      color: 'var(--aurora-yellow)',
+      borderColor: 'var(--aurora-yellow)',
+    },
+  },
+  executed: {
+    label: "EXECUTED",
+    style: {
+      backgroundColor: 'var(--nord3)',
+      color: 'var(--aurora-green)',
+      borderColor: 'var(--aurora-green)',
     },
   },
 }
 
 export function StatusBadge({ status, className }: StatusBadgeProps) {
-  const config = statusConfig[status]
+  const config = statusConfig[status] || {
+    label: status || "UNKNOWN",
+    style: {
+      backgroundColor: 'var(--nord3)',
+      color: 'var(--nord4)',
+      borderColor: 'var(--nord4)',
+    },
+  }
 
   return (
     <span
       className={cn(
-        "inline-flex items-center px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wide border-2 rounded-full leading-none",
+        "inline-flex items-center px-2 py-1 text-[10px] font-bold uppercase tracking-wider border leading-none",
         className
       )}
       style={config.style}

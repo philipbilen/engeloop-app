@@ -99,63 +99,69 @@ export function ClientReleasesTable({ releases, selectedReleaseId = null, select
     setLocalSelectedId(id)
     const params = new URLSearchParams(searchParams?.toString() || "")
     params.set("selected", id)
-    router.replace(`${pathname}?${params.toString()}`)
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false })
   }, [pathname, router, searchParams])
 
   return (
-    <div className="min-h-screen space-y-6">
-      <div className="grid grid-cols-12 gap-6">
+    <div className="min-h-screen space-y-8">
+      <div className="grid grid-cols-12 gap-8">
         <section className="col-span-12 xl:col-span-8 space-y-6">
-          <Card padding="lg" className="space-y-6">
-            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-              <div className="space-y-1">
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--text-dimmer)]">Dashboard</p>
-                <h1 className="text-2xl font-semibold text-[var(--text-bright)]">Releases</h1>
-                <p className="text-sm text-[var(--text-dimmer)]">
-                  {sorted.length} shown · {releases.length} total
-                </p>
-              </div>
-              <Link href="/releases/new" className="self-start md:self-auto">
-                <Button size="lg">+ New Release</Button>
-              </Link>
+          {/* Page Header */}
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between px-1">
+            <div className="space-y-1">
+              <h1 className="text-3xl font-bold tracking-tight text-[var(--text-bright)]">Releases</h1>
+              <p className="text-sm text-[var(--text-dimmer)]">
+                Manage your catalog releases and schedules
+              </p>
             </div>
+            <Link href="/releases/new">
+              <Button size="lg" className="shadow-sm hover:shadow-md transition-all">
+                + New Release
+              </Button>
+            </Link>
+          </div>
 
-            <div className="grid gap-3 lg:grid-cols-3 lg:items-center">
-              <div className="lg:col-span-2">
+          {/* Controls & Filters */}
+          <div className="space-y-4 pb-4">
+            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+              <div className="w-full md:max-w-md">
                 <SearchBar value={searchTerm} onChange={handleSearchChange} />
               </div>
-              <div className="flex justify-end text-xs text-[var(--text-dimmer)]">
-                Sorted by: <span className="ml-1 font-semibold text-[var(--text-bright)] uppercase">{sortLabel}</span>
+              <div className="flex items-center gap-3 text-xs text-[var(--text-dimmer)]">
+                <span className="font-mono">{sorted.length} results</span>
+                <span className="h-3 w-px bg-[var(--border-primary)]" />
+                <span>Sorted by:</span>
+                <button
+                  onClick={() => {
+                    // Cycle sort: date_desc -> date_asc -> title_asc -> title_desc -> status_asc -> status_desc
+                    // Simple toggle for now or just keep label
+                    const next: SortOption = sort === "release_date_desc" ? "release_date_asc" : "release_date_desc"
+                    handleSortChange(next)
+                  }}
+                  className="font-bold text-[var(--text-bright)] uppercase hover:text-[var(--frost-cyan)] transition-colors text-[10px] tracking-wider"
+                >
+                  {sortLabel}
+                </button>
               </div>
             </div>
-
-            <StatusFilters value={status} onChange={handleStatusChange} />
-          </Card>
-
-          <Card padding="lg" className="space-y-4">
-            <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-              <div className="flex gap-3">
-                <div className="rounded-md bg-[var(--bg-interactive)] px-3 py-2 text-xs uppercase tracking-wide text-[var(--text-dim)]">
-                  Table view
-                </div>
-                <div className="rounded-md bg-[color:rgba(var(--accent-primary-rgb),0.08)] px-3 py-2 text-xs font-semibold uppercase tracking-wide text-[var(--accent-primary)]">
-                  Click rows to preview
-                </div>
-              </div>
-              <div className="text-sm text-[var(--text-dimmer)]">
-                Click a row to lock the right summary panel
-              </div>
+            <div className="pt-1">
+              <StatusFilters value={status} onChange={handleStatusChange} />
             </div>
+            <div className="h-px bg-[var(--border-primary)]" />
+          </div>
+
+          {/* Table Section */}
+          <div className="overflow-hidden">
             <ReleasesTable
               releases={sorted}
               currentSort={sort}
               onSortChange={handleSortChange}
               onSelectRelease={handleSelectRelease}
             />
-          </Card>
+          </div>
         </section>
 
-        <aside className="col-span-12 xl:col-span-4 space-y-4">
+        <aside className="col-span-12 xl:col-span-4 space-y-6 pt-[88px]">
           <SummaryPanel
             activeReleaseId={activeReleaseId}
             selectedDetail={selectedDetail}

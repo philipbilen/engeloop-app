@@ -2,37 +2,65 @@
 
 @layer base {
   :root {
+    /* === NORD COLOR PALETTE === */
+    
+    /* Polar Night - Dark Backgrounds */
+    --nord0: #2E3440;  /* Darkest - Page background */
+    --nord1: #3B4252;  /* Dark - Sidebar, panels */
+    --nord2: #434C5E;  /* Medium - Cards, containers */
+    --nord3: #4C566A;  /* Light - Interactive elements */
+    
+    /* Snow Storm - Light Text */
+    --nord4: #D8DEE9;  /* Dimmer text */
+    --nord5: #E5E9F0;  /* Normal text */
+    --nord6: #ECEFF4;  /* Bright text */
+    
+    /* Frost - Accent Blues/Teals */
+    --frost-teal: #8FBCBB;
+    --frost-cyan: #88C0D0;
+    --frost-blue: #81A1C1;
+    --frost-dark-blue: #5E81AC;
+    
+    /* Aurora - Status Colors */
+    --aurora-red: #BF616A;
+    --aurora-orange: #D08770;
+    --aurora-yellow: #EBCB8B;
+    --aurora-green: #A3BE8C;
+    --aurora-purple: #B48EAD;
+
+    /* === DESIGN SYSTEM MAPPINGS === */
+    
     /* Background hierarchy */
-    --bg-page: #F5F7FB;
-    --bg-deep-dark: var(--bg-page); /* alias kept for existing references */
-    --bg-main: #FFFFFF;
-    --bg-interactive: #EEF2F7;
-    --bg-primary: var(--bg-main); /* alias */
-    --bg-secondary: #FFFFFF;
-    --bg-tertiary: #F1F4F9;
+    --bg-page: var(--nord0);
+    --bg-deep-dark: var(--nord1);
+    --bg-main: var(--nord1);
+    --bg-interactive: var(--nord3);
+    --bg-primary: var(--nord1);
+    --bg-secondary: var(--nord2);
+    --bg-tertiary: var(--nord3);
 
     /* Text hierarchy */
-    --text-bright: #0F172A;
-    --text-dim: #3C4A63;
-    --text-dimmer: #6B7280;
-    --text-primary: var(--text-bright);
-    --text-secondary: var(--text-dim);
-    --text-muted: var(--text-dimmer);
+    --text-bright: var(--nord6);
+    --text-dim: var(--nord5);
+    --text-dimmer: var(--nord4);
+    --text-primary: var(--nord6);
+    --text-secondary: var(--nord5);
+    --text-muted: var(--nord4);
 
     /* Accent colors */
-    --accent-primary: #4F46E5; /* Indigo */
-    --accent-primary-rgb: 79, 70, 229;
-    --accent-success: #16A34A;
-    --accent-success-rgb: 22, 163, 74;
-    --accent-warning: #F59E0B;
-    --accent-warning-rgb: 245, 158, 11;
-    --accent-danger: #EF4444;
-    --accent-danger-rgb: 239, 68, 68;
+    --accent-primary: var(--frost-blue);
+    --accent-primary-rgb: 129, 161, 193;
+    --accent-success: var(--aurora-green);
+    --accent-success-rgb: 163, 190, 140;
+    --accent-warning: var(--aurora-yellow);
+    --accent-warning-rgb: 235, 203, 139;
+    --accent-danger: var(--aurora-red);
+    --accent-danger-rgb: 191, 97, 106;
 
-    /* Border & shadow */
-    --border-primary: #E2E8F0;
-    --shadow-card: 0 8px 22px rgba(15, 23, 42, 0.06);
-    --shadow-soft: 0 4px 14px rgba(15, 23, 42, 0.05);
+    /* Border & shadow - Sharp, minimal */
+    --border-primary: var(--nord3);
+    --shadow-card: none;
+    --shadow-soft: none;
   }
 
   * {

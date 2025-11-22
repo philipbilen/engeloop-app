@@ -1,6 +1,7 @@
 "use client"
 
 import { memo, useCallback, useMemo } from "react"
+import { useRouter } from "next/navigation"
 import { StatusBadge } from "@/components/ui/badge"
 import { SortableHeader, type SortOption } from "./sortable-header"
 import type { ReleaseStatus } from "@/components/ui/badge"
@@ -24,17 +25,14 @@ interface ReleasesTableProps {
 }
 
 function formatReleaseDate(dateString: string | null) {
-  if (!dateString) return { line1: "—", line2: "" }
+  if (!dateString) return "—"
 
   const date = new Date(dateString)
-  const month = date.toLocaleDateString("en-US", { month: "short" }).toUpperCase()
-  const day = date.getDate().toString().padStart(2, "0")
   const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, "0")
+  const day = String(date.getDate()).padStart(2, "0")
 
-  return {
-    line1: `${month} ${day}`,
-    line2: year.toString(),
-  }
+  return `${year}-${month}-${day}`
 }
 
 const ReleaseRowComponent = memo(function ReleaseRow({
@@ -44,33 +42,34 @@ const ReleaseRowComponent = memo(function ReleaseRow({
   release: ReleaseRow
   onSelect?: (id: string) => void
 }) {
+  const router = useRouter()
   const formattedDate = useMemo(() => formatReleaseDate(release.release_date), [release.release_date])
 
   const handleClick = useCallback(() => {
     onSelect?.(release.id)
   }, [onSelect, release.id])
 
+  const handleDoubleClick = useCallback(() => {
+    router.push(`/releases/${release.id}/edit`)
+  }, [router, release.id])
+
   return (
     <tr
       onClick={handleClick}
-      className="border-b last:border-0 transition-colors hover:bg-[var(--bg-interactive)] cursor-pointer group"
+      onDoubleClick={handleDoubleClick}
+      className="border-b last:border-0 transition-colors hover:bg-[var(--nord3)] cursor-pointer group"
       style={{ borderColor: "var(--border-primary)" }}
     >
-      {/* Release Date - Stacked */}
-      <td className="px-4 py-4 table-cell align-middle">
-        <div className="text-[var(--text-bright)] font-medium text-sm">
-          {formattedDate.line1}
+      {/* Release Date */}
+      <td className="px-3 py-2.5 table-cell align-middle">
+        <div className="text-[var(--text-bright)] font-mono text-xs">
+          {formattedDate}
         </div>
-        {formattedDate.line2 && (
-          <div className="text-[var(--text-dimmer)] text-xs">
-            {formattedDate.line2}
-          </div>
-        )}
       </td>
 
       {/* Title / Artist - Stacked */}
-      <td className="px-4 py-4 table-cell align-middle">
-        <div className="text-[var(--text-bright)] font-semibold">
+      <td className="px-3 py-2.5 table-cell align-middle">
+        <div className="text-[var(--text-bright)] font-semibold text-sm">
           {release.title}
           {release.version && (
             <span className="text-[var(--text-dim)] font-normal">
@@ -78,23 +77,23 @@ const ReleaseRowComponent = memo(function ReleaseRow({
             </span>
           )}
         </div>
-        <div className="text-[var(--text-dim)] text-sm mt-1">
+        <div className="text-[var(--text-dim)] text-xs mt-0.5">
           {release.artist_display}
         </div>
       </td>
 
       {/* Type */}
-      <td className="px-4 py-4 text-[var(--text-dim)] text-sm table-cell align-middle">
+      <td className="px-3 py-2.5 text-[var(--text-dim)] text-xs table-cell align-middle uppercase">
         {release.type}
       </td>
 
       {/* UPC */}
-      <td className="px-4 py-4 text-[var(--text-dim)] text-sm font-mono table-cell align-middle">
+      <td className="px-3 py-2.5 text-[var(--text-dim)] text-[11px] font-mono table-cell align-middle">
         {release.upc || "—"}
       </td>
 
       {/* Status */}
-      <td className="px-4 py-4 table-cell align-middle">
+      <td className="px-3 py-2.5 table-cell align-middle">
         <StatusBadge status={release.status} />
       </td>
     </tr>
@@ -105,22 +104,22 @@ ReleaseRowComponent.displayName = "ReleaseRow"
 
 function ReleasesTableComponent({ releases, currentSort, onSortChange, onSelectRelease }: ReleasesTableProps) {
   return (
-    <div className="overflow-x-auto rounded-xl border border-[var(--border-primary)] bg-white shadow-[var(--shadow-card)]">
+    <div className="overflow-x-auto bg-[var(--bg-main)]">
       <table className="w-full border-collapse text-left">
         <thead
-          className="border-b-2 bg-[var(--bg-tertiary)]"
-          style={{ borderColor: "var(--border-primary)" }}
+          className="border-t border-b bg-[var(--nord2)]"
+          style={{ borderColor: 'var(--border-primary)' }}
         >
           <tr>
-            <th className="px-4 py-3 text-left w-32">
+            <th className="px-3 py-2 text-left w-28">
               <SortableHeader
                 column="release_date"
-                label="Release Date"
+                label="Date"
                 currentSort={currentSort}
                 onSortChange={onSortChange}
               />
             </th>
-            <th className="px-4 py-3 text-left">
+            <th className="px-3 py-2 text-left">
               <SortableHeader
                 column="title"
                 label="Title / Artist"
@@ -128,17 +127,17 @@ function ReleasesTableComponent({ releases, currentSort, onSortChange, onSelectR
                 onSortChange={onSortChange}
               />
             </th>
-            <th className="px-4 py-3 text-left w-24">
-              <span className="font-semibold uppercase tracking-wide text-xs text-[var(--text-dimmer)]">
+            <th className="px-3 py-2 text-left w-20">
+              <span className="font-bold uppercase tracking-wider text-[10px] text-[var(--text-dimmer)]">
                 Type
               </span>
             </th>
-            <th className="px-4 py-3 text-left w-40">
-              <span className="font-semibold uppercase tracking-wide text-xs text-[var(--text-dimmer)]">
+            <th className="px-3 py-2 text-left w-32">
+              <span className="font-bold uppercase tracking-wider text-[10px] text-[var(--text-dimmer)]">
                 UPC
               </span>
             </th>
-            <th className="px-4 py-3 text-left w-44">
+            <th className="px-3 py-2 text-left w-32">
               <SortableHeader
                 column="status"
                 label="Status"
@@ -153,7 +152,7 @@ function ReleasesTableComponent({ releases, currentSort, onSortChange, onSelectR
             <tr>
               <td
                 colSpan={5}
-                className="px-4 py-12 text-center text-[var(--text-dimmer)]"
+                className="px-3 py-12 text-center text-[var(--text-dimmer)]"
               >
                 No releases found
               </td>
