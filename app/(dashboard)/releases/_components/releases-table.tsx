@@ -57,8 +57,7 @@ const ReleaseRowComponent = memo(function ReleaseRow({
     <tr
       onClick={handleClick}
       onDoubleClick={handleDoubleClick}
-      className="border-b last:border-0 transition-colors hover:bg-[var(--nord3)] cursor-pointer group"
-      style={{ borderColor: "var(--border-primary)" }}
+      className="transition-colors hover:bg-[var(--nord3)] cursor-pointer group even:bg-white/5"
     >
       {/* Release Date */}
       <td className="px-3 py-2.5 table-cell align-middle">
@@ -69,7 +68,7 @@ const ReleaseRowComponent = memo(function ReleaseRow({
 
       {/* Title / Artist - Stacked */}
       <td className="px-3 py-2.5 table-cell align-middle">
-        <div className="text-[var(--text-bright)] font-semibold text-sm">
+        <div className="text-[var(--text-bright)] font-semibold text-sm font-sans">
           {release.title}
           {release.version && (
             <span className="text-[var(--text-dim)] font-normal">

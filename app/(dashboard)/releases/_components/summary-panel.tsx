@@ -16,7 +16,7 @@ export function SummaryPanel({ activeReleaseId, selectedDetail, statusCounts, to
   }
 
   return (
-    <Card padding="lg" className="space-y-4 sticky top-8">
+    <div className="h-full border-l border-[var(--border-primary)] bg-[var(--nord1)] p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--text-dimmer)]">Context</p>
@@ -37,7 +37,7 @@ export function SummaryPanel({ activeReleaseId, selectedDetail, statusCounts, to
       <p className="text-sm text-[var(--text-dimmer)]">
         Click a release row to lock this panel to its details.
       </p>
-    </Card>
+    </div>
   )
 }
 

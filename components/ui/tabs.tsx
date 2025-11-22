@@ -27,9 +27,9 @@ export function Tabs({ children, defaultTab }: { children: ReactNode, defaultTab
   )
 }
 
-export function TabList({ children }: { children: ReactNode }) {
+export function TabList({ children, className }: { children: ReactNode, className?: string }) {
   return (
-    <div className="flex items-center gap-1 border-b" style={{ borderColor: 'var(--border-primary)' }}>
+    <div className={`flex items-end gap-0 border-b border-[var(--border-primary)] w-full ${className || ''}`}>
       {children}
     </div>
   )
@@ -42,12 +42,13 @@ export function Tab({ children, label }: { children: ReactNode, label: string })
   return (
     <button
       onClick={() => setActiveTab(label)}
-      className="px-4 py-2.5 text-xs font-semibold uppercase tracking-wide transition-colors rounded-t-md"
-      style={{
-        color: isActive ? 'var(--text-bright)' : 'var(--text-dimmer)',
-        backgroundColor: isActive ? 'rgba(var(--accent-primary-rgb), 0.08)' : 'transparent',
-        borderBottom: isActive ? '2px solid var(--accent-primary)' : '2px solid transparent',
-      }}
+      className={`
+        px-6 py-3 text-sm font-medium transition-all relative top-[1px] border-t-2 border-x
+        ${isActive 
+          ? 'border-t-[var(--frost-blue)] border-x-[var(--border-primary)] border-b-transparent bg-[var(--bg-secondary)] text-[var(--text-bright)] z-10' 
+          : 'border-transparent text-[var(--text-dimmer)] hover:text-[var(--text-dim)] hover:bg-white/5'
+        }
+      `}
     >
       {children}
     </button>

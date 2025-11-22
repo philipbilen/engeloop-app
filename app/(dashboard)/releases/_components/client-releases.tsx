@@ -92,6 +92,9 @@ export function ClientReleasesTable({ releases, selectedReleaseId = null, select
       delivered: 0,
       released: 0,
       archived: 0,
+      draft: 0,
+      sent: 0,
+      executed: 0,
     })
   }, [releases])
 
@@ -109,7 +112,7 @@ export function ClientReleasesTable({ releases, selectedReleaseId = null, select
           {/* Page Header */}
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between px-1">
             <div className="space-y-1">
-              <h1 className="text-3xl font-bold tracking-tight text-[var(--text-bright)]">Releases</h1>
+              <h1 className="text-3xl font-bold tracking-tight text-[var(--text-bright)] font-sans">Releases</h1>
               <p className="text-sm text-[var(--text-dimmer)]">
                 Manage your catalog releases and schedules
               </p>
@@ -161,7 +164,7 @@ export function ClientReleasesTable({ releases, selectedReleaseId = null, select
           </div>
         </section>
 
-        <aside className="col-span-12 xl:col-span-4 space-y-6 pt-[88px]">
+        <aside className="col-span-12 xl:col-span-4 space-y-6">
           <SummaryPanel
             activeReleaseId={activeReleaseId}
             selectedDetail={selectedDetail}

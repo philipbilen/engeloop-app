@@ -111,7 +111,7 @@ export function ReleaseMainArtistsSection({
         </div>
 
         {/* Artist List */}
-        <div className="divide-y divide-[var(--border-primary)] rounded-md border border-[var(--border-primary)] bg-[var(--bg-main)] mb-4">
+        <div className="rounded-md border border-[var(--border-primary)] bg-[var(--bg-deep-dark)] mb-4 overflow-hidden">
           {artists.length === 0 ? (
             <p className="p-4" style={{ color: "var(--text-dimmer)" }}>No artists added yet</p>
           ) : (
@@ -122,16 +122,14 @@ export function ReleaseMainArtistsSection({
                 onDragStart={() => handleDragStart(index)}
                 onDragOver={(e) => handleDragOver(e, index)}
                 onDragEnd={handleDragEnd}
-                className="p-4 flex items-center justify-between cursor-move"
+                className="p-4 flex items-center justify-between cursor-move even:bg-white/5 hover:bg-white/5 transition-colors"
                 style={{
-                  backgroundColor: "var(--bg-main)",
                   opacity: draggedIndex === index ? 0.5 : 1,
                 }}
               >
                 <div className="flex items-center gap-3">
                   <span
-                    className="text-xl"
-                    style={{ color: "var(--text-dimmer)" }}
+                    className="text-lg text-[var(--text-dimmer)] opacity-50 hover:opacity-100"
                   >
                     ⋮⋮
                   </span>
@@ -142,14 +140,6 @@ export function ReleaseMainArtistsSection({
                     >
                       {artist.artist_name}
                     </p>
-                    {artist.full_legal_name && (
-                      <p
-                        className="text-sm"
-                        style={{ color: "var(--text-dim)" }}
-                      >
-                        {artist.full_legal_name}
-                      </p>
-                    )}
                   </div>
                 </div>
                 <div className="flex items-center gap-2">

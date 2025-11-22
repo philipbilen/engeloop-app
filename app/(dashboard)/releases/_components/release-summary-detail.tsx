@@ -42,8 +42,8 @@ export function ReleaseSummaryDetail({ detail }: ReleaseSummaryDetailProps) {
     detail.tracks.some((t) => t.licensor_shares.length === 0)
 
   return (
-    <div className="h-full flex flex-col sticky top-8 max-h-[calc(100vh-4rem)]">
-      <Card className="flex-1 flex flex-col overflow-hidden border-[var(--border-primary)] bg-[var(--nord2)] p-0 border-l-2">
+    <div className="h-full flex flex-col border-l border-[var(--border-primary)] bg-[var(--nord1)]">
+      <div className="flex-1 flex flex-col overflow-hidden">
         <div className="flex-1 overflow-y-auto">
           {/* === HEADER === */}
           <div className="px-4 py-4 border-b border-[var(--border-primary)] bg-[var(--nord1)]">
@@ -190,7 +190,7 @@ export function ReleaseSummaryDetail({ detail }: ReleaseSummaryDetailProps) {
             </div>
           </StructuralSection>
         </div>
-      </Card>
+      </div>
     </div>
   )
 }
@@ -301,7 +301,10 @@ function renderLicensorShares(tracks: ReleaseDetail["tracks"]) {
         <tbody>
           {entries.map(([name, percent]) => (
             <tr key={name} className="border-b last:border-0 border-[var(--border-primary)]">
-              <td className="px-2 py-1.5 text-[var(--text-dimmer)] pl-4">{name}</td>
+              <td className="px-2 py-1.5 text-[var(--text-dimmer)] pl-4 flex items-center gap-2">
+                <span className="text-[var(--text-dim)] opacity-50">↳</span>
+                {name}
+              </td>
               <td className="px-2 py-1.5 font-mono text-[var(--text-bright)] text-right">{percent.toFixed(2)}%</td>
             </tr>
           ))}

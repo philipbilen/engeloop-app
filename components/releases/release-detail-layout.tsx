@@ -36,44 +36,48 @@ export function ReleaseDetailLayout({
   contributors,
 }: ReleaseDetailLayoutProps) {
   return (
-    <main className="max-w-6xl mx-auto px-8 py-10 space-y-8">
-      {/* Breadcrumb */}
-      <nav className="text-sm flex items-center gap-2 text-[var(--text-dimmer)]">
-        <a href="/releases" className="hover:underline text-[var(--accent-primary)]">
-          Releases
-        </a>
-        <span>&gt;</span>
-        <span className="font-mono text-[var(--text-bright)]">{release.internal_catalog_id}</span>
-        <span>&gt;</span>
-        <span>Edit</span>
-      </nav>
+    <main className="w-full p-6">
+      {/* Header Section */}
+      <div className="flex flex-col gap-4 mb-6 border-b border-[var(--border-primary)] pb-6">
+        <nav className="flex items-center gap-2 text-sm text-[var(--text-dimmer)]">
+          <a href="/releases" className="hover:text-[var(--text-bright)] transition-colors">
+            Releases
+          </a>
+          <span>/</span>
+          <span className="font-mono text-[var(--text-dim)]">{release.internal_catalog_id}</span>
+          <span>/</span>
+          <span>Edit</span>
+        </nav>
 
-      {/* Page Header */}
-      <div className="flex items-start justify-between gap-6">
-        <div className="space-y-2">
-          <h1 className="text-4xl font-bold text-[var(--text-bright)]">
-            {release.title}
-            {release.version && (
-              <span className="ml-2 text-3xl font-medium text-[var(--text-dim)]">
-                ({release.version})
-              </span>
-            )}
-          </h1>
-          <p className="text-lg text-[var(--text-dim)]">
-            {mainArtists.map(a => a.artist_name).join(" & ") || "No artists"}
-          </p>
-        </div>
-        <div className="flex items-center gap-3">
-          <span className="px-3 py-1.5 rounded-full border text-sm font-mono text-[var(--text-bright)] border-[var(--border-primary)]">
-            {release.internal_catalog_id}
-          </span>
-          <StatusBadge status={release.status as ReleaseStatus} />
-          <Button variant="ghost" size="icon" aria-label="More actions">
-            ⋯
-          </Button>
-          <Button variant="secondary" size="sm">
-            Clone as Variant
-          </Button>
+        <div className="flex items-start justify-between gap-6">
+          <div className="space-y-1">
+            <div className="flex items-baseline gap-4">
+              <h1 className="text-2xl font-bold text-[var(--text-bright)] tracking-tight">
+                {release.title}
+              </h1>
+              {release.version && (
+                <span className="text-xl text-[var(--text-dim)]">
+                  ({release.version})
+                </span>
+              )}
+              <StatusBadge status={release.status as ReleaseStatus} className="ml-2" />
+            </div>
+            <p className="text-sm text-[var(--text-dim)]">
+              {mainArtists.map(a => a.artist_name).join(" & ") || "No artists"}
+            </p>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <span className="px-3 py-1.5 rounded-sm border text-xs font-mono text-[var(--text-bright)] border-[var(--border-primary)] bg-[var(--bg-deep-dark)]">
+              {release.internal_catalog_id}
+            </span>
+            <Button variant="ghost" size="icon" aria-label="More actions">
+              ⋯
+            </Button>
+            <Button variant="secondary" size="sm">
+              Clone as Variant
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -86,41 +90,37 @@ export function ReleaseDetailLayout({
           <Tab label="legal-financial">Legal & Financial</Tab>
         </TabList>
 
-        <div className="mt-6">
+        <div className="bg-[var(--bg-secondary)] border border-[var(--border-primary)] border-t-0 min-h-[500px]">
           <TabPanel label="core-info">
-            <Card padding="lg">
+            <div className="p-6">
               <ReleaseMetadataSection release={release} />
-            </Card>
+            </div>
           </TabPanel>
 
           <TabPanel label="artists-credits">
-            <div className="space-y-6">
-              <Card padding="lg">
-                <ReleaseMainArtistsSection
-                  releaseId={release.id}
-                  initialArtists={mainArtists}
-                />
-              </Card>
-              <Card padding="lg">
-                <ReleaseContributorsSection
-                  releaseId={release.id}
-                  initialContributors={contributors}
-                />
-              </Card>
+            <div className="p-6 space-y-8">
+              <ReleaseMainArtistsSection
+                releaseId={release.id}
+                initialArtists={mainArtists}
+              />
+              <ReleaseContributorsSection
+                releaseId={release.id}
+                initialContributors={contributors}
+              />
             </div>
           </TabPanel>
 
           <TabPanel label="tracks">
-            <Card padding="lg">
+            <div className="p-6">
               <ReleaseTracksSection
                 releaseId={release.id}
                 initialTracks={release.tracks || []}
               />
-            </Card>
+            </div>
           </TabPanel>
 
           <TabPanel label="legal-financial">
-            <Card padding="lg">
+            <div className="p-6">
               <LegalFinancialSection
                 release={release}
                 tracks={release.tracks || []}
@@ -128,7 +128,7 @@ export function ReleaseDetailLayout({
                 allSchedules={allSchedules}
                 allContacts={allContacts}
               />
-            </Card>
+            </div>
           </TabPanel>
         </div>
       </Tabs>

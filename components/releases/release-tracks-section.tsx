@@ -144,7 +144,7 @@ export function ReleaseTracksSection({
       </div>
 
       {/* Track List */}
-      <div className="rounded-md border border-[var(--border-primary)] bg-[var(--bg-main)] divide-y divide-[var(--border-primary)]">
+      <div className="rounded-none border border-[var(--border-primary)] bg-[var(--bg-deep-dark)]">
         {tracks.length === 0 ? (
           <p className="px-4 py-3" style={{ color: "var(--text-muted)" }}>No tracks yet</p>
         ) : (
@@ -259,7 +259,7 @@ function TrackRow({
 
   return (
     <div
-      className="bg-[var(--bg-secondary)]"
+      className={`group transition-colors ${isExpanded ? 'bg-[var(--bg-secondary)]' : 'even:bg-white/5 hover:bg-white/5'}`}
       style={{ opacity: isDragging ? 0.5 : 1 }}
     >
       <AddArtistModal
@@ -285,40 +285,47 @@ function TrackRow({
         onDragStart={onDragStart}
         onDragOver={onDragOver}
         onDragEnd={onDragEnd}
-        className="p-4 flex items-center gap-3 cursor-move"
+        className="px-4 py-2 flex items-center gap-3 cursor-move"
         onClick={onToggle}
       >
-        <span className="text-xl" style={{ color: "var(--text-muted)" }}>
+        <span className="text-lg text-[var(--text-dimmer)] opacity-0 group-hover:opacity-100 transition-opacity">
           ⋮⋮
         </span>
-        <div className="flex-1">
-          <div className="flex items-center gap-2">
+        <div className="flex-1 flex items-center justify-between">
+          <div className="flex items-center gap-4">
             <span
-              className="font-mono text-sm"
-              style={{ color: "var(--text-muted)" }}
+              className="font-mono text-xs text-[var(--text-dimmer)] w-6"
             >
               {(index + 1).toString().padStart(2, "0")}
             </span>
-            <p className="font-medium" style={{ color: "var(--text-primary)" }}>
-              {track.title}
+            <div className="flex items-baseline gap-2">
+              <p className="font-medium text-sm text-[var(--text-bright)] font-sans">
+                {track.title}
+              </p>
               {track.version && (
-                <span style={{ color: "var(--text-secondary)" }}>
-                  {" "}
+                <span className="text-xs text-[var(--text-dim)]">
                   ({track.version})
                 </span>
               )}
-            </p>
+            </div>
           </div>
-          {track.duration_ms && (
-            <p className="text-sm" style={{ color: "var(--text-muted)" }}>
-              {formatDuration(track.duration_ms)}
-            </p>
-          )}
+          
+          <div className="flex items-center gap-6">
+             {track.isrc && (
+                <span className="font-mono text-xs text-[var(--text-dimmer)]">
+                  {track.isrc}
+                </span>
+             )}
+             {track.duration_ms && (
+              <span className="font-mono text-xs text-[var(--text-dimmer)] w-12 text-right">
+                {formatDuration(track.duration_ms)}
+              </span>
+            )}
+          </div>
         </div>
         <button
-          className="text-xl transition-transform"
+          className="text-lg transition-transform text-[var(--text-dimmer)]"
           style={{
-            color: "var(--text-muted)",
             transform: isExpanded ? "rotate(180deg)" : "rotate(0deg)",
           }}
         >
@@ -348,6 +355,7 @@ function TrackRow({
                 value={formData.title}
                 onChange={(e) => handleChange("title", e.target.value)}
                 placeholder="Track title"
+                className="bg-transparent border-transparent hover:bg-[var(--bg-deep-dark)] focus:bg-[var(--bg-deep-dark)] focus:border-[var(--accent-primary)] transition-colors"
               />
             </div>
 
@@ -359,6 +367,7 @@ function TrackRow({
                 value={formData.version}
                 onChange={(e) => handleChange("version", e.target.value)}
                 placeholder="e.g., Extended Mix"
+                className="bg-transparent border-transparent hover:bg-[var(--bg-deep-dark)] focus:bg-[var(--bg-deep-dark)] focus:border-[var(--accent-primary)] transition-colors"
               />
             </div>
 
@@ -373,6 +382,7 @@ function TrackRow({
                 value={formData.duration_str}
                 onChange={(e) => handleChange("duration_str", e.target.value)}
                 placeholder="03:30"
+                className="bg-transparent border-transparent hover:bg-[var(--bg-deep-dark)] focus:bg-[var(--bg-deep-dark)] focus:border-[var(--accent-primary)] transition-colors font-mono"
               />
             </div>
 
@@ -384,7 +394,7 @@ function TrackRow({
                 value={formData.isrc}
                 onChange={(e) => handleChange("isrc", e.target.value)}
                 placeholder="Assigned by distributor"
-                className="font-mono"
+                className="bg-transparent border-transparent hover:bg-[var(--bg-deep-dark)] focus:bg-[var(--bg-deep-dark)] focus:border-[var(--accent-primary)] transition-colors font-mono"
               />
             </div>
           </div>
