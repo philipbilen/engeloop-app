@@ -65,7 +65,7 @@ export function SplitsManagementModal({
 
   const handleShareChange = (index: number, newPercent: string) => {
     const newShares = [...shares]
-    newShares[index].share_percent = newPercent
+    newShares[index].share_percent = parseFloat(newPercent) || 0
     setShares(newShares)
   }
 
@@ -76,7 +76,7 @@ export function SplitsManagementModal({
     
     setShares([...shares, {
       contact_id: contact.id,
-      share_percent: "0.00",
+      share_percent: 0,
       role_context: 'Main Artist', // Default role, can be refined
       contacts: contact
     }])
@@ -91,7 +91,7 @@ export function SplitsManagementModal({
     const evenShares = splitEvenly(shares.length)
     const newShares = shares.map((share, index) => ({
       ...share,
-      share_percent: evenShares[index].toFixed(2)
+      share_percent: parseFloat(evenShares[index].toFixed(2))
     }))
     setShares(newShares)
   }

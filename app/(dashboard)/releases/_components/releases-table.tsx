@@ -3,8 +3,11 @@
 import { memo, useCallback, useMemo } from "react"
 import { useRouter } from "next/navigation"
 import { StatusBadge } from "@/components/ui/badge"
-import { SortableHeader, type SortOption } from "./sortable-header"
+import { SortableHeader, type SortOption } from "@/components/ui/sortable-header"
 import type { ReleaseStatus } from "@/components/ui/badge"
+
+export type ReleaseSortColumn = "release_date" | "title" | "status"
+export type ReleaseSortOption = SortOption<ReleaseSortColumn>
 
 export interface ReleaseRow {
   id: string
@@ -19,8 +22,8 @@ export interface ReleaseRow {
 
 interface ReleasesTableProps {
   releases: ReleaseRow[]
-  currentSort: SortOption
-  onSortChange: (next: SortOption) => void
+  currentSort: ReleaseSortOption
+  onSortChange: (next: ReleaseSortOption) => void
   onSelectRelease?: (id: string) => void
 }
 
@@ -57,7 +60,7 @@ const ReleaseRowComponent = memo(function ReleaseRow({
     <tr
       onClick={handleClick}
       onDoubleClick={handleDoubleClick}
-      className="transition-colors hover:bg-[var(--nord3)] cursor-pointer group even:bg-white/5"
+      className="transition-[background-color] duration-75 hover:bg-[var(--nord3)] cursor-pointer group even:bg-white/5"
     >
       {/* Release Date */}
       <td className="px-3 py-2.5 table-cell align-middle">

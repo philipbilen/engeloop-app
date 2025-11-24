@@ -3,14 +3,15 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
+import { Disc2, ScrollText, Contact, Smile, type LucideIcon } from "lucide-react"
 
 interface SidebarLinkProps {
   href: string
   label: string
-  icon?: string
+  icon?: LucideIcon
 }
 
-function SidebarLink({ href, label, icon }: SidebarLinkProps) {
+function SidebarLink({ href, label, icon: Icon }: SidebarLinkProps) {
   const pathname = usePathname()
   const isActive = pathname.startsWith(href)
 
@@ -24,8 +25,8 @@ function SidebarLink({ href, label, icon }: SidebarLinkProps) {
           : "text-white/70 border-transparent hover:bg-white/5 hover:text-white hover:border-white/10"
       )}
     >
-      {icon ? (
-        <span className="text-lg leading-none">{icon}</span>
+      {Icon ? (
+        <Icon className="h-5 w-5" />
       ) : (
         <span className="h-2 w-2 rounded-full border border-current opacity-60" aria-hidden />
       )}
@@ -72,9 +73,10 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 
         {/* Navigation */}
         <nav className="flex-1 p-4 space-y-2">
-          <SidebarLink href="/releases" icon="📀" label="Releases" />
-          <SidebarLink href="/contracts" icon="📜" label="Contracts" />
-          <SidebarLink href="/people" icon="👥" label="People & Artists" />
+          <SidebarLink href="/releases" icon={Disc2} label="Releases" />
+          <SidebarLink href="/contracts" icon={ScrollText} label="Contracts" />
+          <SidebarLink href="/contacts" icon={Contact} label="Contacts" />
+          <SidebarLink href="/artists" icon={Smile} label="Artists" />
         </nav>
       </aside>
 

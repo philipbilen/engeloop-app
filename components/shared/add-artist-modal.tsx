@@ -139,11 +139,7 @@ export function AddArtistModal({
               <p className="font-medium" style={{ color: "var(--text-bright)" }}>
                 {artist.artist_name}
               </p>
-              {artist.full_legal_name && (
-                <p className="text-sm mt-0.5" style={{ color: "var(--text-dim)" }}>
-                  {artist.full_legal_name}
-                </p>
-              )}
+
             </button>
           ))
         ) : (

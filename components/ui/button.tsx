@@ -34,7 +34,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     return (
       <button
         className={cn(
-          "inline-flex items-center justify-center gap-2 font-semibold uppercase tracking-wider rounded-md transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:rgba(var(--accent-primary-rgb),0.35)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-main)] disabled:opacity-50 disabled:cursor-not-allowed active:translate-y-px",
+          "inline-flex items-center justify-center gap-2 font-semibold uppercase tracking-wider rounded-md transition-[box-shadow,background-color,border-color,transform] duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:rgba(var(--accent-primary-rgb),0.35)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-main)] disabled:opacity-50 disabled:cursor-not-allowed active:translate-y-px",
           sizeClasses[size],
           variantClasses[variant],
           className

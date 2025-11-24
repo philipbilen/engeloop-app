@@ -5,9 +5,10 @@ import { Input } from "@/components/ui/input"
 interface SearchBarProps {
   value: string
   onChange: (term: string) => void
+  placeholder?: string
 }
 
-export function SearchBar({ value, onChange }: SearchBarProps) {
+export function SearchBar({ value, onChange, placeholder = "Search..." }: SearchBarProps) {
   return (
     <div className="relative">
       <svg
@@ -25,7 +26,7 @@ export function SearchBar({ value, onChange }: SearchBarProps) {
       </svg>
       <Input
         type="search"
-        placeholder="Search by title, artist, catalog number..."
+        placeholder={placeholder}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         className="w-full bg-[var(--nord1)] border-[var(--border-primary)] text-[var(--text-bright)] pl-9 placeholder:text-[var(--text-dimmer)]"

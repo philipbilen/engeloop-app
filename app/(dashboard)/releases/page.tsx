@@ -52,7 +52,7 @@ export default async function ReleasesPage({
         artist_profiles(artist_name)
       )
     `)
-    .order("release_date", { ascending: false, nullsLast: true })
+    .order("release_date", { ascending: false })
 
   const tableData: ReleaseRow[] =
     releases?.map((release) => {
@@ -159,7 +159,7 @@ export default async function ReleasesPage({
               track.track_contributors?.map((contrib) => ({
                 name: contrib.artist_profiles?.artist_name || "Unknown",
                 role: contrib.role,
-                inherited: contrib.inherited_from_release,
+                inherited: contrib.inherited_from_release || false,
               })) || [],
             licensor_shares:
               track.licensor_shares?.map((share) => ({

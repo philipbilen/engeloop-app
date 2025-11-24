@@ -5,13 +5,13 @@ import Link from "next/link"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { SearchBar } from "./search-bar"
+import { SearchBar } from "@/components/ui/search-bar"
 import { StatusFilters } from "./status-filters"
-import { ReleasesTable, type ReleaseRow } from "./releases-table"
+import { ReleasesTable, type ReleaseRow, type ReleaseSortOption, type ReleaseSortColumn } from "./releases-table"
 import { SummaryPanel } from "./summary-panel"
 import type { ReleaseDetail } from "./release-summary-detail"
 import type { ReleaseStatus } from "@/components/ui/badge"
-import type { SortOption, SortColumn, SortDirection } from "./sortable-header"
+import type { SortDirection } from "@/components/ui/sortable-header"
 
 interface ClientReleasesTableProps {
   releases: ReleaseRow[]
@@ -19,8 +19,8 @@ interface ClientReleasesTableProps {
   selectedDetail?: ReleaseDetail | null
 }
 
-function sortReleases(data: ReleaseRow[], sort: SortOption) {
-  const [column, direction] = sort.split("_") as [SortColumn, SortDirection]
+function sortReleases(data: ReleaseRow[], sort: ReleaseSortOption) {
+  const [column, direction] = sort.split("_") as [ReleaseSortColumn, SortDirection]
   const mod = direction === "asc" ? 1 : -1
 
   return [...data].sort((a, b) => {
@@ -46,7 +46,7 @@ export function ClientReleasesTable({ releases, selectedReleaseId = null, select
   const searchParams = useSearchParams()
   const [searchTerm, setSearchTerm] = useState("")
   const [status, setStatus] = useState<"all" | ReleaseStatus>("all")
-  const [sort, setSort] = useState<SortOption>("release_date_desc")
+  const [sort, setSort] = useState<ReleaseSortOption>("release_date_desc")
   const [localSelectedId, setLocalSelectedId] = useState<string | null>(selectedReleaseId ?? null)
   const activeReleaseId = selectedReleaseId ?? localSelectedId
 
@@ -64,7 +64,7 @@ export function ClientReleasesTable({ releases, selectedReleaseId = null, select
 
   const sorted = useMemo(() => sortReleases(filtered, sort), [filtered, sort])
   const sortLabel = useMemo(() => {
-    const [column, direction] = sort.split("_") as [SortColumn, SortDirection]
+    const [column, direction] = sort.split("_") as [ReleaseSortColumn, SortDirection]
     const label = column === "release_date" ? "Release Date" : column === "title" ? "Title" : "Status"
     return `${label} ${direction === "asc" ? "↑" : "↓"}`
   }, [sort])
@@ -77,7 +77,7 @@ export function ClientReleasesTable({ releases, selectedReleaseId = null, select
     setStatus(next)
   }, [])
 
-  const handleSortChange = useCallback((next: SortOption) => {
+  const handleSortChange = useCallback((next: ReleaseSortOption) => {
     setSort(next)
   }, [])
   const statusCounts = useMemo(() => {
@@ -118,7 +118,7 @@ export function ClientReleasesTable({ releases, selectedReleaseId = null, select
               </p>
             </div>
             <Link href="/releases/new">
-              <Button size="lg" className="shadow-sm hover:shadow-md transition-all">
+              <Button size="lg">
                 + New Release
               </Button>
             </Link>
@@ -138,7 +138,7 @@ export function ClientReleasesTable({ releases, selectedReleaseId = null, select
                   onClick={() => {
                     // Cycle sort: date_desc -> date_asc -> title_asc -> title_desc -> status_asc -> status_desc
                     // Simple toggle for now or just keep label
-                    const next: SortOption = sort === "release_date_desc" ? "release_date_asc" : "release_date_desc"
+                    const next: ReleaseSortOption = sort === "release_date_desc" ? "release_date_asc" : "release_date_desc"
                     handleSortChange(next)
                   }}
                   className="font-bold text-[var(--text-bright)] uppercase hover:text-[var(--frost-cyan)] transition-colors text-[10px] tracking-wider"

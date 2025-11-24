@@ -1,21 +1,22 @@
 "use client"
 
 import { useMemo, useState, useCallback } from "react"
-import Link from "next/link"
+import { useRouter, usePathname, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
-import { Plus } from "lucide-react"
-import { SearchBar } from "./search-bar"
+import { SearchBar } from "@/components/ui/search-bar"
 import { ContractStatusFilters } from "./contract-status-filters"
-import { ContractsTable, type ContractRow, type ContractStatus } from "./contracts-table"
-import type { SortOption, SortColumn, SortDirection } from "./sortable-header"
+import { ContractsTable, type ContractRow, type ContractStatus, type ContractSortOption, type ContractSortColumn } from "./contracts-table"
+import { ContractSummaryPanel, type ContractDetail } from "./contract-summary-panel"
+import type { SortDirection } from "@/components/ui/sortable-header"
 
 interface ClientContractsTableProps {
     contracts: ContractRow[]
+    selectedContractId?: string | null
+    selectedDetail?: ContractDetail | null
 }
 
-function sortContracts(data: ContractRow[], sort: SortOption) {
-    const [column, direction] = sort.split("_") as [SortColumn, SortDirection]
+function sortContracts(data: ContractRow[], sort: ContractSortOption) {
+    const [column, direction] = sort.split("_") as [ContractSortColumn, SortDirection]
     const mod = direction === "asc" ? 1 : -1
 
     return [...data].sort((a, b) => {
@@ -39,10 +40,15 @@ function sortContracts(data: ContractRow[], sort: SortOption) {
     })
 }
 
-export function ClientContractsTable({ contracts }: ClientContractsTableProps) {
+export function ClientContractsTable({ contracts, selectedContractId = null, selectedDetail = null }: ClientContractsTableProps) {
+    const router = useRouter()
+    const pathname = usePathname()
+    const searchParams = useSearchParams()
     const [searchTerm, setSearchTerm] = useState("")
     const [status, setStatus] = useState<"all" | ContractStatus>("all")
-    const [sort, setSort] = useState<SortOption>("updated_at_desc")
+    const [sort, setSort] = useState<ContractSortOption>("updated_at_desc")
+    const [localSelectedId, setLocalSelectedId] = useState<string | null>(selectedContractId ?? null)
+    const activeContractId = selectedContractId ?? localSelectedId
 
     const filtered = useMemo(() => {
         const term = searchTerm.trim().toLowerCase()
@@ -58,16 +64,6 @@ export function ClientContractsTable({ contracts }: ClientContractsTableProps) {
 
     const sorted = useMemo(() => sortContracts(filtered, sort), [filtered, sort])
 
-    const sortLabel = useMemo(() => {
-        const [column, direction] = sort.split("_") as [SortColumn, SortDirection]
-        const label = column === "updated_at" ? "Updated"
-            : column === "licensors" ? "Licensor"
-                : column === "type" ? "Type"
-                    : column === "status" ? "Status"
-                        : "Pool %"
-        return `${label} ${direction === "asc" ? "↑" : "↓"}`
-    }, [sort])
-
     const handleSearchChange = useCallback((term: string) => {
         setSearchTerm(term)
     }, [])
@@ -76,60 +72,73 @@ export function ClientContractsTable({ contracts }: ClientContractsTableProps) {
         setStatus(next)
     }, [])
 
-    const handleSortChange = useCallback((next: SortOption) => {
+    const handleSortChange = useCallback((next: ContractSortOption) => {
         setSort(next)
     }, [])
 
-    return (
-        <div className="min-h-screen space-y-6">
-            <div className="grid grid-cols-12 gap-6">
-                <section className="col-span-12 space-y-6">
-                    <Card padding="lg" className="space-y-6">
-                        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                            <div className="space-y-1">
-                                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--text-dimmer)]">Dashboard</p>
-                                <h1 className="text-2xl font-semibold text-[var(--text-bright)]">Contracts</h1>
-                                <p className="text-sm text-[var(--text-dimmer)]">
-                                    {sorted.length} shown · {contracts.length} total
-                                </p>
-                            </div>
-                            <Button className="bg-[var(--accent-primary)] hover:bg-[var(--accent-primary)]/90 text-white shadow-lg shadow-indigo-500/20">
-                                <Plus className="w-4 h-4 mr-2" />
-                                New Contract
-                            </Button>
-                        </div>
+    const handleSelectContract = useCallback((id: string) => {
+        setLocalSelectedId(id)
+        const params = new URLSearchParams(searchParams?.toString() || "")
+        params.set("selected", id)
+        router.replace(`${pathname}?${params.toString()}`, { scroll: false })
+    }, [pathname, router, searchParams])
 
-                        <div className="grid gap-3 lg:grid-cols-3 lg:items-center">
-                            <div className="lg:col-span-2">
+    return (
+        <div className="min-h-screen space-y-8">
+            <div className="grid grid-cols-12 gap-8">
+                <section className="col-span-12 xl:col-span-8 space-y-6">
+                    {/* Page Header */}
+                    <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between px-1">
+                        <div className="space-y-1">
+                            <h1 className="text-3xl font-bold tracking-tight text-[var(--text-bright)] font-sans">Contracts</h1>
+                            <p className="text-sm text-[var(--text-dimmer)]">
+                                Manage agreements, splits, and release schedules
+                            </p>
+                        </div>
+                        <Button size="lg">
+                            + New Contract
+                        </Button>
+                    </div>
+
+                    {/* Controls */}
+                    <div className="space-y-4 pb-4">
+                        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                            <div className="w-full md:max-w-md">
                                 <SearchBar
                                     value={searchTerm}
                                     onChange={handleSearchChange}
                                     placeholder="Search by licensor, type, or ID..."
                                 />
                             </div>
-                            <div className="flex justify-end text-xs text-[var(--text-dimmer)]">
-                                Sorted by: <span className="ml-1 font-semibold text-[var(--text-bright)] uppercase">{sortLabel}</span>
+                            <div className="flex items-center gap-3 text-xs text-[var(--text-dimmer)]">
+                                <span className="font-mono">{sorted.length} results</span>
                             </div>
                         </div>
-
-                        <ContractStatusFilters value={status} onChange={handleStatusChange} />
-                    </Card>
-
-                    <Card padding="lg" className="space-y-4">
-                        <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-                            <div className="flex gap-3">
-                                <div className="rounded-md bg-[var(--bg-interactive)] px-3 py-2 text-xs uppercase tracking-wide text-[var(--text-dim)]">
-                                    Table view
-                                </div>
-                            </div>
+                        <div className="pt-1">
+                            <ContractStatusFilters value={status} onChange={handleStatusChange} />
                         </div>
+                        <div className="h-px bg-[var(--border-primary)]" />
+                    </div>
+
+                    {/* Table Section */}
+                    <div className="overflow-hidden">
                         <ContractsTable
                             contracts={sorted}
                             currentSort={sort}
                             onSortChange={handleSortChange}
+                            onSelectContract={handleSelectContract}
                         />
-                    </Card>
+                    </div>
                 </section>
+
+                {/* Sidebar */}
+                <aside className="col-span-12 xl:col-span-4 space-y-6">
+                    <ContractSummaryPanel
+                        activeContractId={activeContractId}
+                        selectedDetail={selectedDetail}
+                        totalCount={contracts.length}
+                    />
+                </aside>
             </div>
         </div>
     )

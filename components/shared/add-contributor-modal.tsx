@@ -136,7 +136,7 @@ export function AddContributorModal({
                 style={{ borderBottom: "2px solid var(--border-primary)", backgroundColor: "var(--bg-main)" }}
               >
                 <p className="font-medium" style={{ color: "var(--text-bright)" }}>{artist.artist_name}</p>
-                {artist.full_legal_name && <p className="text-sm mt-0.5" style={{ color: "var(--text-dim)" }}>{artist.full_legal_name}</p>}
+
               </button>
             )
           })

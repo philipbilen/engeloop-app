@@ -84,7 +84,7 @@ export function ReleaseSummaryDetail({ detail }: ReleaseSummaryDetailProps) {
               missingUpc ? "UPC MISSING" : null,
             ]}
           >
-            <div className="space-y-3">
+            <div className="space-y-1">
               <DataField label="CATALOG ID" value={detail.internal_catalog_id || "—"} mono />
               <DataField label="TYPE" value={detail.type} />
               <DataField label="RELEASE DATE" value={formatDate(detail.release_date) || "—"} />
@@ -147,7 +147,7 @@ export function ReleaseSummaryDetail({ detail }: ReleaseSummaryDetailProps) {
             href={`/releases/${detail.id}/edit#financials`}
             warnings={[financeIncomplete ? "INCOMPLETE" : null]}
           >
-            <div className="space-y-4">
+            <div className="space-y-2">
               {/* Finance Table */}
               <div className="border border-[var(--border-primary)]">
                 <table className="w-full text-xs">
@@ -233,7 +233,7 @@ function StructuralSection({
           </Link>
         </div>
       </div>
-      <div className="px-4 py-3">
+      <div className="px-4 py-2">
         {children}
       </div>
     </div>

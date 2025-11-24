@@ -68,7 +68,7 @@ export function ScheduleCard({
         <DetailItem label="Territory" value={schedule.territory || "N/A"} />
         <DetailItem
           label="Created"
-          value={new Date(schedule.created_at).toLocaleDateString()}
+          value={schedule.created_at ? new Date(schedule.created_at).toLocaleDateString() : "—"}
         />
       </CardContent>
     </Card>

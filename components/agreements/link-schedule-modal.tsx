@@ -57,7 +57,7 @@ export function LinkScheduleModal({
               >
                 <div>
                   <p className="font-semibold" style={{ color: "var(--text-primary)" }}>
-                    {schedule.contract_type} - {new Date(schedule.created_at).toLocaleDateString()}
+                    {schedule.contract_type} - {schedule.created_at ? new Date(schedule.created_at).toLocaleDateString() : "No Date"}
                   </p>
                   <p className="text-sm" style={{ color: "var(--text-muted)" }}>
                     ID: {schedule.id}

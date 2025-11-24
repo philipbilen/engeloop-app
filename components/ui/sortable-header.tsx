@@ -2,32 +2,37 @@
 
 import { cn } from "@/lib/utils"
 
-export type SortColumn = "release_date" | "title" | "status"
 export type SortDirection = "asc" | "desc"
-export type SortOption = `${SortColumn}_${SortDirection}`
+export type SortOption<T extends string = string> = `${T}_${SortDirection}`
 
-interface SortableHeaderProps {
-  column: SortColumn
+interface SortableHeaderProps<T extends string = string> {
+  column: T
   label: string
   className?: string
-  currentSort: SortOption
-  onSortChange: (next: SortOption) => void
+  currentSort: SortOption<string>
+  onSortChange: (next: SortOption<T>) => void
 }
 
-export function SortableHeader({ column, label, className, currentSort, onSortChange }: SortableHeaderProps) {
+export function SortableHeader<T extends string = string>({ 
+  column, 
+  label, 
+  className, 
+  currentSort, 
+  onSortChange 
+}: SortableHeaderProps<T>) {
   // Parse current sort
-  const [activeColumn, direction] = currentSort.split("_") as [SortColumn, SortDirection]
+  const [activeColumn, direction] = currentSort.split("_") as [string, SortDirection]
   const isActive = activeColumn === column
   const isAsc = direction === "asc"
 
   const handleClick = () => {
-    let newSort: SortOption
+    let newSort: SortOption<T>
     if (isActive) {
       // Toggle direction
-      newSort = `${column}_${isAsc ? "desc" : "asc"}`
+      newSort = `${column}_${isAsc ? "desc" : "asc"}` as SortOption<T>
     } else {
-      // First click: dates desc, text asc
-      newSort = column === "release_date" ? `${column}_desc` : `${column}_asc`
+      // Default to asc for everything initially, can be customized if needed
+      newSort = `${column}_asc` as SortOption<T>
     }
 
     onSortChange(newSort)

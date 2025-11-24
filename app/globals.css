@@ -76,4 +76,29 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
+
+  /* === PERFORMANCE OPTIMIZATIONS === */
+  
+  /* Enable smooth scrolling with GPU acceleration */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Optimize table rendering for scroll performance */
+  table {
+    contain: layout style;
+    will-change: scroll-position;
+  }
+
+  /* Optimize table rows - use GPU acceleration for hover states */
+  tr {
+    contain: layout paint;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+  }
+
+  /* Reduce paint area for table cells */
+  td, th {
+    contain: layout;
+  }
 }
